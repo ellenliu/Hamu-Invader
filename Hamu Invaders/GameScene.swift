@@ -11,10 +11,11 @@ import GameplayKit
 
 class GameScene: SKScene {
     
-    let hamster = SKSpriteNode(imageNamed: "180")
+    let hamster = SKSpriteNode(imageNamed: "hamster")
     
     override func didMove(to view: SKView) {
-        hamster.position =  CGPoint(x: size.width * 0.9, y: size.height * 0.5)
+        hamster.position =  CGPoint(x: size.width * 0.8, y: size.height * 0.5)
+        hamster.setScale(0.50)
         self.addChild(hamster)
     }
 }
