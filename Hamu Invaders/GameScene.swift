@@ -11,11 +11,45 @@ import GameplayKit
 
 class GameScene: SKScene {
     
-    let hamster = SKSpriteNode(imageNamed: "hamster")
+    let rooster = SKSpriteNode(imageNamed: "jooster")
     
     override func didMove(to view: SKView) {
-        hamster.position =  CGPoint(x: size.width * 0.8, y: size.height * 0.5)
+        rooster.position =  CGPoint(x: size.width * 0.2, y: size.height * 0.25)
+        rooster.setScale(0.50)
+        self.addChild(rooster)
+        
+        // loop endlessly once a second
+        run(SKAction.repeatForever(
+          SKAction.sequence([
+            SKAction.run(addHamsters),
+            SKAction.wait(forDuration: 1.0)
+            ])
+        ))
+    }
+    
+    // Helper functions for generating positions
+    func random() -> CGFloat {
+      return CGFloat(Float(arc4random()) / 4294967296)
+    }
+
+    func random(min: CGFloat, max: CGFloat) -> CGFloat {
+      return random() * (max - min) + min
+    }
+    
+    /**
+     Determine the position to generate hamsters, and create an action for them to move across the screen and be removed
+     */
+    func addHamsters(){
+        let hamster = SKSpriteNode(imageNamed: "hamster")
+        let yPos = random(min: hamster.size.height/4, max: size.height - hamster.size.height/4)
+        hamster.position = CGPoint(x: size.width + hamster.size.width/4, y: yPos)
         hamster.setScale(0.50)
         self.addChild(hamster)
+        
+        let speed = random(min: CGFloat(2.0), max: CGFloat(4.0))
+        let moveLeft = SKAction.move(to: CGPoint(x: -hamster.size.width/4, y: yPos),
+        duration: TimeInterval(speed))
+        let removeFromScreen = SKAction.removeFromParent()
+        hamster.run(SKAction.sequence([moveLeft, removeFromScreen]))
     }
 }
