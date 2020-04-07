@@ -29,8 +29,8 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please select a character" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MwY-3c-kUR">
-                                        <rect key="frame" x="14" y="72" width="272" height="36.5"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please select a character:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MwY-3c-kUR">
+                                        <rect key="frame" x="12" y="72" width="276.5" height="36.5"/>
                                         <fontDescription key="fontDescription" name="Minecraftia-Regular" family="Minecraftia" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -45,10 +45,18 @@
                                                     <constraint firstAttribute="height" constant="150" id="SCP-tj-nIm"/>
                                                 </constraints>
                                                 <state key="normal" backgroundImage="looster"/>
+                                                <connections>
+                                                    <action selector="loosterButton:" destination="jTp-cI-NN6" eventType="touchUpInside" id="vbv-B8-ID7"/>
+                                                    <segue destination="BV1-FR-VrT" kind="presentation" identifier="LoosterGameViewControllerSegue" modalPresentationStyle="fullScreen" id="7kd-Cf-g87"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="57j-kU-nv7">
                                                 <rect key="frame" x="150" y="0.0" width="150" height="150"/>
                                                 <state key="normal" backgroundImage="jooster"/>
+                                                <connections>
+                                                    <action selector="joosterButton:" destination="jTp-cI-NN6" eventType="touchUpInside" id="8jF-HM-3US"/>
+                                                    <segue destination="BV1-FR-VrT" kind="presentation" identifier="JoosterGameViewControllerSegue" animates="NO" modalPresentationStyle="fullScreen" id="1fy-Rt-fnn"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                     </stackView>
@@ -77,6 +85,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="4qk-I5-YsI"/>
                     </view>
+                    <navigationItem key="navigationItem" id="8gx-GD-gyg"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
@@ -87,4 +96,7 @@
         <image name="jooster" width="640" height="640"/>
         <image name="looster" width="640" height="640"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="7kd-Cf-g87"/>
+    </inferredMetricsTieBreakers>
 </document>

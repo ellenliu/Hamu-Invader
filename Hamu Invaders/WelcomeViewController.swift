@@ -10,6 +10,14 @@ import UIKit
 
 class WelcomeViewController: UIViewController {
     
+    @IBAction func loosterButton(_ sender: Any) {
+        self.performSegue(withIdentifier: "LoosterGameViewControllerSegue", sender: self)
+    }
+    
+    @IBAction func joosterButton(_ sender: Any) {
+        self.performSegue(withIdentifier: "JoosterGameViewControllerSegue", sender: self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
