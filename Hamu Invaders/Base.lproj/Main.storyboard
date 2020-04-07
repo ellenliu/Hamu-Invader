@@ -20,15 +20,46 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Hamu  Invaders" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bbx-pL-8Ab">
-                                <rect key="frame" x="54" y="413" width="306" height="71"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="Minecraftia-Regular" family="Minecraftia" pointSize="33"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="xIn-iq-TPs">
+                                <rect key="frame" x="57" y="314" width="300" height="268.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hamu  Invaders" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VEQ-Yt-GAI">
+                                        <rect key="frame" x="16" y="0.0" width="268.5" height="62"/>
+                                        <fontDescription key="fontDescription" name="Minecraftia-Regular" family="Minecraftia" pointSize="29"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please select a character" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MwY-3c-kUR">
+                                        <rect key="frame" x="14" y="72" width="272" height="36.5"/>
+                                        <fontDescription key="fontDescription" name="Minecraftia-Regular" family="Minecraftia" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="xd5-Z5-ff2">
+                                        <rect key="frame" x="0.0" y="118.5" width="300" height="150"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5ah-Gh-Wc5">
+                                                <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="150" id="C6Z-Ig-1MB"/>
+                                                    <constraint firstAttribute="height" constant="150" id="SCP-tj-nIm"/>
+                                                </constraints>
+                                                <state key="normal" backgroundImage="looster"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="57j-kU-nv7">
+                                                <rect key="frame" x="150" y="0.0" width="150" height="150"/>
+                                                <state key="normal" backgroundImage="jooster"/>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="xIn-iq-TPs" firstAttribute="centerY" secondItem="19p-r4-CHs" secondAttribute="centerY" id="VS9-u7-phw"/>
+                            <constraint firstItem="xIn-iq-TPs" firstAttribute="centerX" secondItem="19p-r4-CHs" secondAttribute="centerX" id="fFj-tR-SB2"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="19p-r4-CHs"/>
                     </view>
                 </viewController>
@@ -52,4 +83,8 @@
             <point key="canvasLocation" x="141" y="82"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="jooster" width="640" height="640"/>
+        <image name="looster" width="640" height="640"/>
+    </resources>
 </document>
