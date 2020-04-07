@@ -9,6 +9,40 @@
 import SpriteKit
 import GameplayKit
 
+// Helper functions to do vector math
+func +(left: CGPoint, right: CGPoint) -> CGPoint {
+  return CGPoint(x: left.x + right.x, y: left.y + right.y)
+}
+
+func -(left: CGPoint, right: CGPoint) -> CGPoint {
+  return CGPoint(x: left.x - right.x, y: left.y - right.y)
+}
+
+func *(point: CGPoint, scalar: CGFloat) -> CGPoint {
+  return CGPoint(x: point.x * scalar, y: point.y * scalar)
+}
+
+func /(point: CGPoint, scalar: CGFloat) -> CGPoint {
+  return CGPoint(x: point.x / scalar, y: point.y / scalar)
+}
+
+#if !(arch(x86_64) || arch(arm64))
+  func sqrt(a: CGFloat) -> CGFloat {
+    return CGFloat(sqrtf(Float(a)))
+  }
+#endif
+
+extension CGPoint {
+  func length() -> CGFloat {
+    return sqrt(x*x + y*y)
+  }
+  
+  func normalized() -> CGPoint {
+    return self / length()
+  }
+}
+
+
 class GameScene: SKScene {
     
     let rooster = SKSpriteNode(imageNamed: "jooster")
@@ -51,5 +85,35 @@ class GameScene: SKScene {
         duration: TimeInterval(speed))
         let removeFromScreen = SKAction.removeFromParent()
         hamster.run(SKAction.sequence([moveLeft, removeFromScreen]))
+    }
+    
+    /**
+     When user takes their finger off the screen, we shoot a projectile in the angle where the touch was in these steps
+     1. Set up initial location of projectile to where rooster is
+     2. Calculate the difference in location between projectile and touch, and make sure touch is not behind rooster
+     3. Convert offset to a unit vector and make shoot amount big enough so it def goes off the screen
+     4. Create the action to move the projectile
+     */
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else{
+          return
+        }
+        let touchLocation = touch.location(in: self)
+        
+        let projectile = SKSpriteNode(imageNamed: "sunflower-seed")
+        projectile.position = rooster.position
+        
+        let offset = touchLocation - projectile.position
+        if offset.x < 0{
+            return
+        }
+        addChild(projectile)
+        
+        let direction = offset.normalized()
+        let shootAmount = direction * 1000
+        let destination = shootAmount + projectile.position
+        let moveLeft = SKAction.move(to: destination, duration: 2.0)
+        let removeFromScreen = SKAction.removeFromParent()
+        projectile.run(SKAction.sequence([moveLeft, removeFromScreen]))
     }
 }
