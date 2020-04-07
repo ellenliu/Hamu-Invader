@@ -1,4 +1,4 @@
-# Hamu-Invader
+# Hamu Invader
 iOS game app 
 
 Screenshot of the game currently:
