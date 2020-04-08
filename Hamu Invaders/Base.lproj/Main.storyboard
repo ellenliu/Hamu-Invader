@@ -1,24 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="jTp-cI-NN6">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Minecraftia-Regular.ttf">
+            <string>Minecraftia-Regular</string>
+        </array>
+    </customFonts>
     <scenes>
+        <!--Welcome View Controller-->
+        <scene sceneID="3Iy-gQ-YGK">
+            <objects>
+                <viewController id="jTp-cI-NN6" customClass="WelcomeViewController" customModule="Hamu_Invaders" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="pty-pG-sCI">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="xIn-iq-TPs">
+                                <rect key="frame" x="57" y="314" width="300" height="268.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hamu  Invaders" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VEQ-Yt-GAI">
+                                        <rect key="frame" x="16" y="0.0" width="268.5" height="62"/>
+                                        <fontDescription key="fontDescription" name="Minecraftia-Regular" family="Minecraftia" pointSize="29"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please select a character:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MwY-3c-kUR">
+                                        <rect key="frame" x="12" y="72" width="276.5" height="36.5"/>
+                                        <fontDescription key="fontDescription" name="Minecraftia-Regular" family="Minecraftia" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="xd5-Z5-ff2">
+                                        <rect key="frame" x="0.0" y="118.5" width="300" height="150"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5ah-Gh-Wc5">
+                                                <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="150" id="C6Z-Ig-1MB"/>
+                                                    <constraint firstAttribute="height" constant="150" id="SCP-tj-nIm"/>
+                                                </constraints>
+                                                <state key="normal" backgroundImage="looster"/>
+                                                <connections>
+                                                    <action selector="loosterButton:" destination="jTp-cI-NN6" eventType="touchUpInside" id="vbv-B8-ID7"/>
+                                                    <segue destination="BV1-FR-VrT" kind="presentation" identifier="LoosterGameViewControllerSegue" modalPresentationStyle="fullScreen" id="7kd-Cf-g87"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="57j-kU-nv7">
+                                                <rect key="frame" x="150" y="0.0" width="150" height="150"/>
+                                                <state key="normal" backgroundImage="jooster"/>
+                                                <connections>
+                                                    <action selector="joosterButton:" destination="jTp-cI-NN6" eventType="touchUpInside" id="8jF-HM-3US"/>
+                                                    <segue destination="BV1-FR-VrT" kind="presentation" identifier="JoosterGameViewControllerSegue" animates="NO" modalPresentationStyle="fullScreen" id="1fy-Rt-fnn"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="xIn-iq-TPs" firstAttribute="centerY" secondItem="19p-r4-CHs" secondAttribute="centerY" id="VS9-u7-phw"/>
+                            <constraint firstItem="xIn-iq-TPs" firstAttribute="centerX" secondItem="19p-r4-CHs" secondAttribute="centerX" id="fFj-tR-SB2"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="19p-r4-CHs"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="s4H-hz-P9l" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-716" y="82"/>
+        </scene>
         <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="Hamu_Invaders" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="3se-qz-xqx" customClass="SKView">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="4qk-I5-YsI"/>
                     </view>
+                    <navigationItem key="navigationItem" id="8gx-GD-gyg"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="141" y="82"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="jooster" width="640" height="640"/>
+        <image name="looster" width="640" height="640"/>
+    </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="7kd-Cf-g87"/>
+    </inferredMetricsTieBreakers>
 </document>

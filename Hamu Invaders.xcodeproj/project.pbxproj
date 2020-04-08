@@ -13,6 +13,8 @@
 		C3829B90243A93EE001BB21A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C3829B8E243A93EE001BB21A /* Main.storyboard */; };
 		C3829B92243A93F4001BB21A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C3829B91243A93F4001BB21A /* Assets.xcassets */; };
 		C3829B95243A93F4001BB21A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C3829B93243A93F4001BB21A /* LaunchScreen.storyboard */; };
+		C3829B9D243C5C47001BB21A /* Minecraftia-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C3829B9C243C5C28001BB21A /* Minecraftia-Regular.ttf */; };
+		C3829BA1243C5D8B001BB21A /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3829BA0243C5D8B001BB21A /* WelcomeViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		C3829B91243A93F4001BB21A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C3829B94243A93F4001BB21A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C3829B96243A93F4001BB21A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C3829B9C243C5C28001BB21A /* Minecraftia-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Minecraftia-Regular.ttf"; path = "../../../Downloads/minecraftia/Minecraftia-Regular.ttf"; sourceTree = "<group>"; };
+		C3829BA0243C5D8B001BB21A /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,8 @@
 				C3829B91243A93F4001BB21A /* Assets.xcassets */,
 				C3829B93243A93F4001BB21A /* LaunchScreen.storyboard */,
 				C3829B96243A93F4001BB21A /* Info.plist */,
+				C3829B9C243C5C28001BB21A /* Minecraftia-Regular.ttf */,
+				C3829BA0243C5D8B001BB21A /* WelcomeViewController.swift */,
 			);
 			path = "Hamu Invaders";
 			sourceTree = "<group>";
@@ -126,6 +132,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3829B90243A93EE001BB21A /* Main.storyboard in Resources */,
+				C3829B9D243C5C47001BB21A /* Minecraftia-Regular.ttf in Resources */,
 				C3829B92243A93F4001BB21A /* Assets.xcassets in Resources */,
 				C3829B95243A93F4001BB21A /* LaunchScreen.storyboard in Resources */,
 			);
@@ -139,6 +146,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3829B8B243A93EE001BB21A /* GameScene.swift in Sources */,
+				C3829BA1243C5D8B001BB21A /* WelcomeViewController.swift in Sources */,
 				C3829B8D243A93EE001BB21A /* GameViewController.swift in Sources */,
 				C3829B85243A93EE001BB21A /* AppDelegate.swift in Sources */,
 			);
