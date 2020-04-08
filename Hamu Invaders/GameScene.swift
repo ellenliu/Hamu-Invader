@@ -9,6 +9,13 @@
 import SpriteKit
 import GameplayKit
 
+struct PhysicsCategory {
+  static let none      : UInt32 = 0
+  static let all       : UInt32 = UInt32.max
+  static let hamster   : UInt32 = 0b1       // 1
+  static let projectile: UInt32 = 0b10      // 2
+}
+
 // Helper functions to do vector math
 func +(left: CGPoint, right: CGPoint) -> CGPoint {
   return CGPoint(x: left.x + right.x, y: left.y + right.y)
@@ -59,6 +66,8 @@ class GameScene: SKScene {
             SKAction.wait(forDuration: 1.0)
             ])
         ))
+        physicsWorld.gravity = .zero
+        physicsWorld.contactDelegate = self
     }
     
     // Helper functions for generating positions
@@ -71,10 +80,16 @@ class GameScene: SKScene {
     }
     
     /**
-     Determine the position to generate hamsters, and create an action for them to move across the screen and be removed
+     Determine the position to generate hamsters, creates each physics body, and create an action for them to move across the screen and be removed
      */
     func addHamsters(){
         let hamster = SKSpriteNode(imageNamed: "hamster")
+        hamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hamster.size.width / 4, height: hamster.size.height / 4))
+        hamster.physicsBody?.isDynamic = true
+        hamster.physicsBody?.categoryBitMask = PhysicsCategory.hamster
+        hamster.physicsBody?.contactTestBitMask = PhysicsCategory.projectile // notify when it hits a projectile
+        hamster.physicsBody?.collisionBitMask = PhysicsCategory.none // dont bounce off each other
+        
         let yPos = random(min: hamster.size.height/8, max: size.height - hamster.size.height/8)
         hamster.position = CGPoint(x: size.width + hamster.size.width/8, y: yPos)
         hamster.setScale(0.25)
@@ -89,7 +104,7 @@ class GameScene: SKScene {
     
     /**
      When user takes their finger off the screen, we shoot a projectile in the angle where the touch was in these steps
-     1. Set up initial location of projectile to where rooster is
+     1. Set up initial location of projectile to where rooster is and create physics body
      2. Calculate the difference in location between projectile and touch, and make sure touch is not behind rooster
      3. Convert offset to a unit vector and make shoot amount big enough so it def goes off the screen
      4. Create the action to move the projectile
@@ -102,6 +117,12 @@ class GameScene: SKScene {
         
         let projectile = SKSpriteNode(imageNamed: "sunflower-seed")
         projectile.position = rooster.position
+        projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width/2)
+        projectile.physicsBody?.isDynamic = true
+        projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
+        projectile.physicsBody?.contactTestBitMask = PhysicsCategory.hamster
+        projectile.physicsBody?.collisionBitMask = PhysicsCategory.none
+        projectile.physicsBody?.usesPreciseCollisionDetection = true
         
         let offset = touchLocation - projectile.position
         if offset.x < 0{
@@ -116,4 +137,39 @@ class GameScene: SKScene {
         let removeFromScreen = SKAction.removeFromParent()
         projectile.run(SKAction.sequence([moveLeft, removeFromScreen]))
     }
+    
+    /**
+     When hamster and projectile collide, remove both from the screen
+     */
+    func projectileDidCollideWithHamster(_ projectile: SKSpriteNode, _ hamster: SKSpriteNode) {
+      projectile.removeFromParent()
+      hamster.removeFromParent()
+    }
+
+}
+
+
+extension GameScene: SKPhysicsContactDelegate {
+    func didBegin(_ contact: SKPhysicsContact) {
+      // 1
+      var firstBody: SKPhysicsBody
+      var secondBody: SKPhysicsBody
+      if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+        firstBody = contact.bodyA
+        secondBody = contact.bodyB
+      } else {
+        firstBody = contact.bodyB
+        secondBody = contact.bodyA
+      }
+     
+      // 2
+      if ((firstBody.categoryBitMask & PhysicsCategory.hamster != 0) &&
+          (secondBody.categoryBitMask & PhysicsCategory.projectile != 0)) {
+        if let hamster = firstBody.node as? SKSpriteNode,
+          let projectile = secondBody.node as? SKSpriteNode {
+          projectileDidCollideWithHamster(projectile, hamster)
+        }
+      }
+    }
+
 }
