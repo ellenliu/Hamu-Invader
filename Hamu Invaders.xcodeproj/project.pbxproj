@@ -16,6 +16,7 @@
 		C3829B9D243C5C47001BB21A /* Minecraftia-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C3829B9C243C5C28001BB21A /* Minecraftia-Regular.ttf */; };
 		C3829BA1243C5D8B001BB21A /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3829BA0243C5D8B001BB21A /* WelcomeViewController.swift */; };
 		C3829BA3243EDC49001BB21A /* Reborn.caf in Resources */ = {isa = PBXBuildFile; fileRef = C3829BA2243EDC49001BB21A /* Reborn.caf */; };
+		C3829BA5243EE34B001BB21A /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3829BA4243EE34B001BB21A /* GameOverScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		C3829B9C243C5C28001BB21A /* Minecraftia-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Minecraftia-Regular.ttf"; path = "../../../Downloads/minecraftia/Minecraftia-Regular.ttf"; sourceTree = "<group>"; };
 		C3829BA0243C5D8B001BB21A /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		C3829BA2243EDC49001BB21A /* Reborn.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Reborn.caf; path = ../../../Downloads/Reborn.caf; sourceTree = "<group>"; };
+		C3829BA4243EE34B001BB21A /* GameOverScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				C3829B9C243C5C28001BB21A /* Minecraftia-Regular.ttf */,
 				C3829BA0243C5D8B001BB21A /* WelcomeViewController.swift */,
 				C3829BA2243EDC49001BB21A /* Reborn.caf */,
+				C3829BA4243EE34B001BB21A /* GameOverScene.swift */,
 			);
 			path = "Hamu Invaders";
 			sourceTree = "<group>";
@@ -149,6 +152,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3829BA5243EE34B001BB21A /* GameOverScene.swift in Sources */,
 				C3829B8B243A93EE001BB21A /* GameScene.swift in Sources */,
 				C3829BA1243C5D8B001BB21A /* WelcomeViewController.swift in Sources */,
 				C3829B8D243A93EE001BB21A /* GameViewController.swift in Sources */,

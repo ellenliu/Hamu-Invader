@@ -8,6 +8,7 @@
 
 import SpriteKit
 import GameplayKit
+import SwiftUI
 
 struct PhysicsCategory {
   static let none      : UInt32 = 0
@@ -53,6 +54,7 @@ extension CGPoint {
 class GameScene: SKScene {
     
     let rooster = SKSpriteNode(imageNamed: "jooster")
+    var hamstersDestroyed = 0
     
     override func didMove(to view: SKView) {
         rooster.position =  CGPoint(x: size.width * 0.2, y: size.height * 0.50)
@@ -73,7 +75,6 @@ class GameScene: SKScene {
         let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
         backgroundMusic.autoplayLooped = true
         addChild(backgroundMusic)
-        
     }
     
     // Helper functions for generating positions
@@ -105,7 +106,16 @@ class GameScene: SKScene {
         let moveLeft = SKAction.move(to: CGPoint(x: -hamster.size.width/8, y: yPos),
         duration: TimeInterval(speed))
         let removeFromScreen = SKAction.removeFromParent()
-        hamster.run(SKAction.sequence([moveLeft, removeFromScreen]))
+        
+        let loseAction = SKAction.run() { [weak self] in
+          guard let `self` = self else { return }
+          let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+          let gameOverScene = GameOverScene(size: self.size)
+          self.view?.presentScene(gameOverScene, transition: reveal)
+        }
+        
+        hamster.run(SKAction.sequence([moveLeft, loseAction, removeFromScreen]))
+
     }
     
     /**
@@ -148,6 +158,7 @@ class GameScene: SKScene {
      When hamster and projectile collide, remove both from the screen
      */
     func projectileDidCollideWithHamster(_ projectile: SKSpriteNode, _ hamster: SKSpriteNode) {
+      hamstersDestroyed += 1
       projectile.removeFromParent()
       hamster.removeFromParent()
     }
