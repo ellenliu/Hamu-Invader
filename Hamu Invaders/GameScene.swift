@@ -68,6 +68,12 @@ class GameScene: SKScene {
         ))
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
+        
+        // Add audio
+        let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
+        backgroundMusic.autoplayLooped = true
+        addChild(backgroundMusic)
+        
     }
     
     // Helper functions for generating positions
@@ -150,8 +156,10 @@ class GameScene: SKScene {
 
 
 extension GameScene: SKPhysicsContactDelegate {
+    /**
+     Check if the two bodies that collided were the hamster and projectile, if so, call projectileDidCollideWithHamster()
+     */
     func didBegin(_ contact: SKPhysicsContact) {
-      // 1
       var firstBody: SKPhysicsBody
       var secondBody: SKPhysicsBody
       if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
@@ -162,7 +170,6 @@ extension GameScene: SKPhysicsContactDelegate {
         secondBody = contact.bodyA
       }
      
-      // 2
       if ((firstBody.categoryBitMask & PhysicsCategory.hamster != 0) &&
           (secondBody.categoryBitMask & PhysicsCategory.projectile != 0)) {
         if let hamster = firstBody.node as? SKSpriteNode,

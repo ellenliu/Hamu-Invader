@@ -15,6 +15,7 @@
 		C3829B95243A93F4001BB21A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C3829B93243A93F4001BB21A /* LaunchScreen.storyboard */; };
 		C3829B9D243C5C47001BB21A /* Minecraftia-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C3829B9C243C5C28001BB21A /* Minecraftia-Regular.ttf */; };
 		C3829BA1243C5D8B001BB21A /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3829BA0243C5D8B001BB21A /* WelcomeViewController.swift */; };
+		C3829BA3243EDC49001BB21A /* Reborn.caf in Resources */ = {isa = PBXBuildFile; fileRef = C3829BA2243EDC49001BB21A /* Reborn.caf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		C3829B96243A93F4001BB21A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C3829B9C243C5C28001BB21A /* Minecraftia-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Minecraftia-Regular.ttf"; path = "../../../Downloads/minecraftia/Minecraftia-Regular.ttf"; sourceTree = "<group>"; };
 		C3829BA0243C5D8B001BB21A /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		C3829BA2243EDC49001BB21A /* Reborn.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Reborn.caf; path = ../../../Downloads/Reborn.caf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				C3829B96243A93F4001BB21A /* Info.plist */,
 				C3829B9C243C5C28001BB21A /* Minecraftia-Regular.ttf */,
 				C3829BA0243C5D8B001BB21A /* WelcomeViewController.swift */,
+				C3829BA2243EDC49001BB21A /* Reborn.caf */,
 			);
 			path = "Hamu Invaders";
 			sourceTree = "<group>";
@@ -134,6 +137,7 @@
 				C3829B90243A93EE001BB21A /* Main.storyboard in Resources */,
 				C3829B9D243C5C47001BB21A /* Minecraftia-Regular.ttf in Resources */,
 				C3829B92243A93F4001BB21A /* Assets.xcassets in Resources */,
+				C3829BA3243EDC49001BB21A /* Reborn.caf in Resources */,
 				C3829B95243A93F4001BB21A /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
