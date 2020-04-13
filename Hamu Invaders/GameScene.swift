@@ -55,7 +55,7 @@ class GameScene: SKScene {
     
     let rooster = SKSpriteNode(imageNamed: "jooster")
     let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
-    var hamstersFed = 0
+    var hamstersFed:Int = 0
     
     override func didMove(to view: SKView) {
         rooster.position =  CGPoint(x: size.width * 0.2, y: size.height * 0.50)
@@ -114,11 +114,13 @@ class GameScene: SKScene {
         duration: TimeInterval(speed))
         let removeFromScreen = SKAction.removeFromParent()
         
+        // Transition to GameOverScene, passing data
         let loseAction = SKAction.run() { [weak self] in
-          guard let `self` = self else { return }
-          let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-          let gameOverScene = GameOverScene(size: self.size)
-          self.view?.presentScene(gameOverScene, transition: reveal)
+            guard let `self` = self else { return }
+            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+            let gameOverScene = GameOverScene(size: self.size)
+            gameOverScene.points = self.hamstersFed
+            self.view?.presentScene(gameOverScene, transition: reveal)
         }
         
         hamster.run(SKAction.sequence([moveLeft, loseAction, removeFromScreen]))
