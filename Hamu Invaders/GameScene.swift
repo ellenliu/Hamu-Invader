@@ -54,7 +54,8 @@ extension CGPoint {
 class GameScene: SKScene {
     
     let rooster = SKSpriteNode(imageNamed: "jooster")
-    var hamstersDestroyed = 0
+    let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
+    var hamstersFed:Int = 0
     
     override func didMove(to view: SKView) {
         rooster.position =  CGPoint(x: size.width * 0.2, y: size.height * 0.50)
@@ -70,6 +71,12 @@ class GameScene: SKScene {
         ))
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
+        
+        pointsLabel.text = "Hamsters fed: \(hamstersFed)"
+        pointsLabel.fontSize = 15
+        pointsLabel.fontColor = SKColor.white
+        pointsLabel.position = CGPoint(x: size.width - 90 , y: size.height - 50)
+        addChild(pointsLabel)
         
         // Add audio
         let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
@@ -107,11 +114,17 @@ class GameScene: SKScene {
         duration: TimeInterval(speed))
         let removeFromScreen = SKAction.removeFromParent()
         
+        // Transition to GameOverScene, passing data
         let loseAction = SKAction.run() { [weak self] in
-          guard let `self` = self else { return }
-          let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-          let gameOverScene = GameOverScene(size: self.size)
-          self.view?.presentScene(gameOverScene, transition: reveal)
+            guard let `self` = self else { return }
+            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+            let gameOverScene = GameOverScene(size: self.size)
+            self.compareMaxPoints()
+            if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
+                gameOverScene.maxPoints = Int(maxPoints) ?? -1
+            }
+            gameOverScene.points = self.hamstersFed
+            self.view?.presentScene(gameOverScene, transition: reveal)
         }
         
         hamster.run(SKAction.sequence([moveLeft, loseAction, removeFromScreen]))
@@ -158,13 +171,26 @@ class GameScene: SKScene {
      When hamster and projectile collide, remove both from the screen
      */
     func projectileDidCollideWithHamster(_ projectile: SKSpriteNode, _ hamster: SKSpriteNode) {
-      hamstersDestroyed += 1
+      hamstersFed += 1
+      pointsLabel.text = "Hamsters fed: \(hamstersFed)"
       projectile.removeFromParent()
       hamster.removeFromParent()
     }
 
+    /**
+     Compare if the user's points this turn is the max points, and update UserDefault if so
+     */
+    func compareMaxPoints(){
+        if let currMax = UserDefaults.standard.string(forKey: "maxPoints") {
+            print("curr max is ")
+            print(currMax)
+            if hamstersFed > Int(currMax) ?? 0 {
+                print("value bigger")
+                UserDefaults.standard.set(hamstersFed, forKey: "maxPoints")
+            }
+        }
+    }
 }
-
 
 extension GameScene: SKPhysicsContactDelegate {
     /**
