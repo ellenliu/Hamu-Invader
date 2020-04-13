@@ -20,6 +20,11 @@ class GameViewController: UIViewController {
             scene.scaleMode = .resizeFill
             skView.presentScene(scene)
         }
+        if let currMax = UserDefaults.standard.string(forKey: "maxPoints") {
+            return
+        } else {
+            UserDefaults.standard.set(0, forKey: "maxPoints")
+        }
     }
         
     override var shouldAutorotate: Bool {

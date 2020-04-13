@@ -119,6 +119,10 @@ class GameScene: SKScene {
             guard let `self` = self else { return }
             let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
             let gameOverScene = GameOverScene(size: self.size)
+            self.compareMaxPoints()
+            if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
+                gameOverScene.maxPoints = Int(maxPoints) ?? -1
+            }
             gameOverScene.points = self.hamstersFed
             self.view?.presentScene(gameOverScene, transition: reveal)
         }
@@ -173,8 +177,20 @@ class GameScene: SKScene {
       hamster.removeFromParent()
     }
 
+    /**
+     Compare if the user's points this turn is the max points, and update UserDefault if so
+     */
+    func compareMaxPoints(){
+        if let currMax = UserDefaults.standard.string(forKey: "maxPoints") {
+            print("curr max is ")
+            print(currMax)
+            if hamstersFed > Int(currMax) ?? 0 {
+                print("value bigger")
+                UserDefaults.standard.set(hamstersFed, forKey: "maxPoints")
+            }
+        }
+    }
 }
-
 
 extension GameScene: SKPhysicsContactDelegate {
     /**
