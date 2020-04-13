@@ -15,7 +15,7 @@ class GameOverScene: SKScene {
         let label = SKLabelNode(fontNamed: "Minecraftia")
         label.text = "You Lose"
         label.fontSize = 50
-        label.fontColor = SKColor.black
+        label.fontColor = SKColor.white
         label.position = CGPoint(x: size.width/2, y: size.height/2 + 50)
         addChild(label)
         

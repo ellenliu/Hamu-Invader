@@ -54,7 +54,8 @@ extension CGPoint {
 class GameScene: SKScene {
     
     let rooster = SKSpriteNode(imageNamed: "jooster")
-    var hamstersDestroyed = 0
+    let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
+    var hamstersFed = 0
     
     override func didMove(to view: SKView) {
         rooster.position =  CGPoint(x: size.width * 0.2, y: size.height * 0.50)
@@ -70,6 +71,12 @@ class GameScene: SKScene {
         ))
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
+        
+        pointsLabel.text = "Hamsters fed: \(hamstersFed)"
+        pointsLabel.fontSize = 15
+        pointsLabel.fontColor = SKColor.white
+        pointsLabel.position = CGPoint(x: size.width - 90 , y: size.height - 50)
+        addChild(pointsLabel)
         
         // Add audio
         let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
@@ -158,7 +165,8 @@ class GameScene: SKScene {
      When hamster and projectile collide, remove both from the screen
      */
     func projectileDidCollideWithHamster(_ projectile: SKSpriteNode, _ hamster: SKSpriteNode) {
-      hamstersDestroyed += 1
+      hamstersFed += 1
+      pointsLabel.text = "Hamsters fed: \(hamstersFed)"
       projectile.removeFromParent()
       hamster.removeFromParent()
     }
