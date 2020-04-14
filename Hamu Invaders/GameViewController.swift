@@ -16,17 +16,15 @@ class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        UserDefaults.standard.set(characterChosen, forKey: "character")
+        
         let scene = GameScene(size: view.bounds.size)
-        if let skView = self.view as! SKView? {
-            skView.ignoresSiblingOrder = true
-            scene.scaleMode = .resizeFill
-            scene.userData = NSMutableDictionary()
-            scene.userData?.setObject(characterChosen ?? "", forKey: "character" as NSCopying)
-            skView.presentScene(scene)
-        }
-        if let currMax = UserDefaults.standard.string(forKey: "maxPoints") {
-            return
-        } else {
+           if let skView = self.view as! SKView? {
+               skView.ignoresSiblingOrder = true
+               scene.scaleMode = .resizeFill
+               skView.presentScene(scene)
+           }
+        if UserDefaults.standard.string(forKey: "maxPoints") == nil {
             UserDefaults.standard.set(0, forKey: "maxPoints")
         }
     }

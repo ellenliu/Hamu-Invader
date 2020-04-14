@@ -57,15 +57,12 @@ class GameScene: SKScene {
     let jooster = SKSpriteNode(imageNamed: "jooster")
     let looster = SKSpriteNode(imageNamed: "looster")
     let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
-    var characterChosen: String?
     var hamstersFed:Int = 0
     
     override func didMove(to view: SKView) {
         // user selected which character to display
-        if let character = self.userData?.value(forKey: "character") {
-            let characterStr = String(describing: character)
-            characterChosen = characterStr
-            if characterStr == "looster" {
+        if let currCharacter = UserDefaults.standard.string(forKey: "character") {
+            if currCharacter == "looster" {
                 looster.position = CGPoint(x: size.width * 0.2, y: size.height * 0.50)
                 looster.setScale(0.25)
                 self.addChild(looster)
@@ -159,12 +156,13 @@ class GameScene: SKScene {
         let touchLocation = touch.location(in: self)
         
         let projectile = SKSpriteNode(imageNamed: "sunflower-seed")
-        if characterChosen == "looster" {
-            projectile.position = looster.position
-        } else{
-            projectile.position = jooster.position
+        if let currCharacter = UserDefaults.standard.string(forKey: "character") {
+            if currCharacter == "looster"{
+                projectile.position = looster.position
+            } else{
+                projectile.position = jooster.position
+            }
         }
-        
         projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width/2)
         projectile.physicsBody?.isDynamic = true
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
