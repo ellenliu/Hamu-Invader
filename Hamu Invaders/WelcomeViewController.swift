@@ -10,11 +10,16 @@ import UIKit
 
 class WelcomeViewController: UIViewController {
     
+    var characterChosen: String = ""
+    
     @IBAction func loosterButton(_ sender: Any) {
+        characterChosen = "looster"
         self.performSegue(withIdentifier: "LoosterGameViewControllerSegue", sender: self)
+        
     }
     
     @IBAction func joosterButton(_ sender: Any) {
+        characterChosen = "jooster"
         self.performSegue(withIdentifier: "JoosterGameViewControllerSegue", sender: self)
     }
     
@@ -25,14 +30,14 @@ class WelcomeViewController: UIViewController {
     }
     
 
-    /*
+    
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        if let destinationVC = segue.destination as? GameViewController {
+            destinationVC.characterChosen = characterChosen
+        }
     }
-    */
+    
 
 }
