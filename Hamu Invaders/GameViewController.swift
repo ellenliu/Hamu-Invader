@@ -11,6 +11,8 @@ import SpriteKit
 import GameplayKit
 
 class GameViewController: UIViewController {
+    
+    var characterChosen: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,6 +20,8 @@ class GameViewController: UIViewController {
         if let skView = self.view as! SKView? {
             skView.ignoresSiblingOrder = true
             scene.scaleMode = .resizeFill
+            scene.userData = NSMutableDictionary()
+            scene.userData?.setObject(characterChosen ?? "", forKey: "character" as NSCopying)
             skView.presentScene(scene)
         }
         if let currMax = UserDefaults.standard.string(forKey: "maxPoints") {

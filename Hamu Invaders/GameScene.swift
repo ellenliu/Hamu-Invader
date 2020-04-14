@@ -9,6 +9,7 @@
 import SpriteKit
 import GameplayKit
 import SwiftUI
+import Foundation
 
 struct PhysicsCategory {
   static let none      : UInt32 = 0
@@ -53,14 +54,27 @@ extension CGPoint {
 
 class GameScene: SKScene {
     
-    let rooster = SKSpriteNode(imageNamed: "jooster")
+    let jooster = SKSpriteNode(imageNamed: "jooster")
+    let looster = SKSpriteNode(imageNamed: "looster")
     let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
+    var characterChosen: String?
     var hamstersFed:Int = 0
     
     override func didMove(to view: SKView) {
-        rooster.position =  CGPoint(x: size.width * 0.2, y: size.height * 0.50)
-        rooster.setScale(0.25)
-        self.addChild(rooster)
+        // user selected which character to display
+        if let character = self.userData?.value(forKey: "character") {
+            let characterStr = String(describing: character)
+            characterChosen = characterStr
+            if characterStr == "looster" {
+                looster.position = CGPoint(x: size.width * 0.2, y: size.height * 0.50)
+                looster.setScale(0.25)
+                self.addChild(looster)
+            } else {
+                jooster.position = CGPoint(x: size.width * 0.2, y: size.height * 0.50)
+                jooster.setScale(0.25)
+                self.addChild(jooster)
+            }
+        }
         
         // loop endlessly once a second
         run(SKAction.repeatForever(
@@ -145,7 +159,12 @@ class GameScene: SKScene {
         let touchLocation = touch.location(in: self)
         
         let projectile = SKSpriteNode(imageNamed: "sunflower-seed")
-        projectile.position = rooster.position
+        if characterChosen == "looster" {
+            projectile.position = looster.position
+        } else{
+            projectile.position = jooster.position
+        }
+        
         projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width/2)
         projectile.physicsBody?.isDynamic = true
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
@@ -182,10 +201,7 @@ class GameScene: SKScene {
      */
     func compareMaxPoints(){
         if let currMax = UserDefaults.standard.string(forKey: "maxPoints") {
-            print("curr max is ")
-            print(currMax)
             if hamstersFed > Int(currMax) ?? 0 {
-                print("value bigger")
                 UserDefaults.standard.set(hamstersFed, forKey: "maxPoints")
             }
         }
