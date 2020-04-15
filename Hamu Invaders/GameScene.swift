@@ -15,7 +15,8 @@ struct PhysicsCategory {
   static let none      : UInt32 = 0
   static let all       : UInt32 = UInt32.max
   static let hamster   : UInt32 = 0b1       // 1
-  static let projectile: UInt32 = 0b10      // 2
+  static let hungoverHamster: UInt32 = 0b10      // 2
+  static let projectile: UInt32 = 0b11 // 3
 }
 
 // Helper functions to do vector math
@@ -143,30 +144,47 @@ class GameScene: SKScene {
             gameOverScene.points = self.hamstersFed
             self.view?.presentScene(gameOverScene, transition: reveal)
         }
-        
         hamster.run(SKAction.sequence([moveLeft, loseAction, removeFromScreen]))
-
     }
     
     /**
-     Create hungover hamsters that move in a zigzag
+     Create hungover hamsters that move in a bezier curve, and add physics body
      */
     func addHungoverHamsters(){
         let hungoverHamster = SKSpriteNode(imageNamed: "hungover-hamster")
         hungoverHamster.setScale(0.75)
+        hungoverHamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hungoverHamster.size.width, height: hungoverHamster.size.height))
+        hungoverHamster.physicsBody?.isDynamic = true
+        hungoverHamster.physicsBody?.categoryBitMask = PhysicsCategory.hungoverHamster
+        hungoverHamster.physicsBody?.contactTestBitMask = PhysicsCategory.projectile // notify when it hit
+        hungoverHamster.physicsBody?.collisionBitMask = PhysicsCategory.none // dont bounce off each other
         self.addChild(hungoverHamster)
         
-        let yPos = random(min: hungoverHamster.size.height/2, max: size.height - hungoverHamster.size.height/2)
+        let yPos = random(min: hungoverHamster.size.height/2 + 100, max: size.height - hungoverHamster.size.height/2 - 100)
         let path = UIBezierPath()
         path.move(to: CGPoint(x: size.width, y: yPos))
         
         path.addCurve(to: CGPoint(x: -hungoverHamster.size.width/4, y: yPos),
-                      controlPoint1: CGPoint(x: size.width - size.width/4, y: yPos + 200),
-                      controlPoint2: CGPoint(x: size.width/4, y: yPos - 200))
+                      controlPoint1: CGPoint(x: size.width - size.width/4, y: yPos + 400),
+                      controlPoint2: CGPoint(x: size.width/4, y: yPos - 400))
         
-        let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: 80)
+        let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: 120)
         let removeFromScreen = SKAction.removeFromParent()
-        hungoverHamster.run(SKAction.sequence([curve, removeFromScreen]))
+        
+        // Transition to GameOverScene, passing data
+        let loseAction = SKAction.run() { [weak self] in
+            guard let `self` = self else { return }
+            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+            let gameOverScene = GameOverScene(size: self.size)
+            self.compareMaxPoints()
+            if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
+                gameOverScene.maxPoints = Int(maxPoints) ?? -1
+            }
+            gameOverScene.points = self.hamstersFed
+            self.view?.presentScene(gameOverScene, transition: reveal)
+        }
+        
+        hungoverHamster.run(SKAction.sequence([curve, loseAction, removeFromScreen]))
     }
     
     /**
@@ -194,6 +212,7 @@ class GameScene: SKScene {
         projectile.physicsBody?.isDynamic = true
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
         projectile.physicsBody?.contactTestBitMask = PhysicsCategory.hamster
+        projectile.physicsBody?.contactTestBitMask = PhysicsCategory.hungoverHamster
         projectile.physicsBody?.collisionBitMask = PhysicsCategory.none
         projectile.physicsBody?.usesPreciseCollisionDetection = true
         
@@ -235,7 +254,8 @@ class GameScene: SKScene {
 
 extension GameScene: SKPhysicsContactDelegate {
     /**
-     Check if the two bodies that collided were the hamster and projectile, if so, call projectileDidCollideWithHamster()
+     Check if the two bodies that collided were the hamster/hungover hamster and projectile, if so, call projectileDidCollideWithHamster()
+     TODO: Why do hamster collide with other hamster sometimes and disappear??
      */
     func didBegin(_ contact: SKPhysicsContact) {
       var firstBody: SKPhysicsBody
@@ -254,7 +274,13 @@ extension GameScene: SKPhysicsContactDelegate {
           let projectile = secondBody.node as? SKSpriteNode {
           projectileDidCollideWithHamster(projectile, hamster)
         }
-      }
+      } else if ((firstBody.categoryBitMask & PhysicsCategory.projectile != 0) &&
+        (secondBody.categoryBitMask & PhysicsCategory.hungoverHamster != 0)) {
+            if let hamster = firstBody.node as? SKSpriteNode,
+              let projectile = secondBody.node as? SKSpriteNode {
+              projectileDidCollideWithHamster(projectile, hamster)
+            }
+        }
     }
 
 }
