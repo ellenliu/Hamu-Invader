@@ -73,11 +73,17 @@ class GameScene: SKScene {
             }
         }
         
-        // loop endlessly once a second
+        //loop endlessly once a second
         run(SKAction.repeatForever(
           SKAction.sequence([
             SKAction.run(addHamsters),
-            SKAction.wait(forDuration: 1.0)
+            SKAction.wait(forDuration: 2.0)
+            ])
+        ))
+        run(SKAction.repeatForever(
+          SKAction.sequence([
+            SKAction.run(addHungoverHamsters),
+            SKAction.wait(forDuration: 4.0)
             ])
         ))
         physicsWorld.gravity = .zero
@@ -105,7 +111,7 @@ class GameScene: SKScene {
     }
     
     /**
-     Determine the position to generate hamsters, creates each physics body, and create an action for them to move across the screen and be removed
+     Determine the position to generate regular hamsters, creates each physics body, and create an action for them to move across the screen and be removed
      */
     func addHamsters(){
         let hamster = SKSpriteNode(imageNamed: "hamster")
@@ -140,6 +146,27 @@ class GameScene: SKScene {
         
         hamster.run(SKAction.sequence([moveLeft, loseAction, removeFromScreen]))
 
+    }
+    
+    /**
+     Create hungover hamsters that move in a zigzag
+     */
+    func addHungoverHamsters(){
+        let hungoverHamster = SKSpriteNode(imageNamed: "hungover-hamster")
+        hungoverHamster.setScale(0.75)
+        self.addChild(hungoverHamster)
+        
+        let yPos = random(min: hungoverHamster.size.height/2, max: size.height - hungoverHamster.size.height/2)
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: size.width, y: yPos))
+        
+        path.addCurve(to: CGPoint(x: -hungoverHamster.size.width/4, y: yPos),
+                      controlPoint1: CGPoint(x: size.width - size.width/4, y: yPos + 200),
+                      controlPoint2: CGPoint(x: size.width/4, y: yPos - 200))
+        
+        let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: 80)
+        let removeFromScreen = SKAction.removeFromParent()
+        hungoverHamster.run(SKAction.sequence([curve, removeFromScreen]))
     }
     
     /**
