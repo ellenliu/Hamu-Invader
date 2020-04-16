@@ -58,6 +58,7 @@ class GameScene: SKScene {
     let jooster = SKSpriteNode(imageNamed: "jooster")
     let looster = SKSpriteNode(imageNamed: "looster")
     let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
+    let livesLabel = SKLabelNode(fontNamed: "Minecraftia")
     var hamstersFed:Int = 0
     var livesLeft: Int = 3
     
@@ -91,11 +92,17 @@ class GameScene: SKScene {
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
         
-        pointsLabel.text = "Hamsters fed: \(hamstersFed)"
+        pointsLabel.text = "Hamsters Fed: \(hamstersFed)"
         pointsLabel.fontSize = 15
         pointsLabel.fontColor = SKColor.white
         pointsLabel.position = CGPoint(x: size.width - 90 , y: size.height - 50)
         addChild(pointsLabel)
+        
+        livesLabel.text = "Lives Left: \(livesLeft)"
+        livesLabel.fontSize = 15
+        livesLabel.fontColor = SKColor.red
+        livesLabel.position = CGPoint(x: 70 , y: size.height - 50)
+        addChild(livesLabel)
         
         // Add audio
         let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
@@ -134,7 +141,7 @@ class GameScene: SKScene {
         let removeFromScreen = SKAction.removeFromParent()
         
         // Transition to GameOverScene, passing data
-        let deductLives = SKAction.run() { self.deductLives()}
+        let deductLives = SKAction.run() {self.deductLives()}
         hamster.run(SKAction.sequence([moveLeft, deductLives, removeFromScreen]))
     }
     
@@ -144,7 +151,7 @@ class GameScene: SKScene {
     func addHungoverHamsters(){
         let hungoverHamster = SKSpriteNode(imageNamed: "hungover-hamster")
         hungoverHamster.setScale(0.75)
-        hungoverHamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hungoverHamster.size.width, height: hungoverHamster.size.height))
+        hungoverHamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hungoverHamster.size.width / 2, height: hungoverHamster.size.height / 2))
         hungoverHamster.physicsBody?.isDynamic = true
         hungoverHamster.physicsBody?.categoryBitMask = PhysicsCategory.hungoverHamster
         hungoverHamster.physicsBody?.contactTestBitMask = PhysicsCategory.projectile // notify when it hit
@@ -159,11 +166,9 @@ class GameScene: SKScene {
                       controlPoint1: CGPoint(x: size.width - size.width/4, y: yPos + 400),
                       controlPoint2: CGPoint(x: size.width/4, y: yPos - 400))
         
-        let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: 120)
+        let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: 160)
         let removeFromScreen = SKAction.removeFromParent()
-        
-        // Transition to GameOverScene, passing data
-        let deductLives = SKAction.run() { self.deductLives()}
+        let deductLives = SKAction.run() {self.deductLives()}
         
         hungoverHamster.run(SKAction.sequence([curve, deductLives, removeFromScreen]))
     }
@@ -185,6 +190,7 @@ class GameScene: SKScene {
      */
     func deductLives() {
         livesLeft -= 1
+        self.livesLabel.text = "Lives Left: \(self.livesLeft)"
         if livesLeft == 0 {
             let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
             let gameOverScene = GameOverScene(size: self.size)
@@ -245,7 +251,7 @@ class GameScene: SKScene {
      */
     func projectileDidCollideWithHamster(_ projectile: SKSpriteNode, _ hamster: SKSpriteNode) {
       hamstersFed += 1
-      pointsLabel.text = "Hamsters fed: \(hamstersFed)"
+      pointsLabel.text = "Hamsters Fed: \(hamstersFed)"
       projectile.removeFromParent()
       hamster.removeFromParent()
     }
