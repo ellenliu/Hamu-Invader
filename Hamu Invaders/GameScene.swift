@@ -59,6 +59,7 @@ class GameScene: SKScene {
     let looster = SKSpriteNode(imageNamed: "looster")
     let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
     var hamstersFed:Int = 0
+    var livesLeft: Int = 3
     
     override func didMove(to view: SKView) {
         // user selected which character to display
@@ -133,18 +134,8 @@ class GameScene: SKScene {
         let removeFromScreen = SKAction.removeFromParent()
         
         // Transition to GameOverScene, passing data
-        let loseAction = SKAction.run() { [weak self] in
-            guard let `self` = self else { return }
-            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-            let gameOverScene = GameOverScene(size: self.size)
-            self.compareMaxPoints()
-            if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
-                gameOverScene.maxPoints = Int(maxPoints) ?? -1
-            }
-            gameOverScene.points = self.hamstersFed
-            self.view?.presentScene(gameOverScene, transition: reveal)
-        }
-        hamster.run(SKAction.sequence([moveLeft, loseAction, removeFromScreen]))
+        let deductLives = SKAction.run() { self.deductLives()}
+        hamster.run(SKAction.sequence([moveLeft, deductLives, removeFromScreen]))
     }
     
     /**
@@ -172,19 +163,9 @@ class GameScene: SKScene {
         let removeFromScreen = SKAction.removeFromParent()
         
         // Transition to GameOverScene, passing data
-        let loseAction = SKAction.run() { [weak self] in
-            guard let `self` = self else { return }
-            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-            let gameOverScene = GameOverScene(size: self.size)
-            self.compareMaxPoints()
-            if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
-                gameOverScene.maxPoints = Int(maxPoints) ?? -1
-            }
-            gameOverScene.points = self.hamstersFed
-            self.view?.presentScene(gameOverScene, transition: reveal)
-        }
+        let deductLives = SKAction.run() { self.deductLives()}
         
-        hungoverHamster.run(SKAction.sequence([curve, loseAction, removeFromScreen]))
+        hungoverHamster.run(SKAction.sequence([curve, deductLives, removeFromScreen]))
     }
     
     /**
@@ -197,6 +178,23 @@ class GameScene: SKScene {
             SKAction.wait(forDuration: 3.0, withRange: 2.0)
             ])
         ))
+    }
+    
+    /**
+     Check if the number of lives has gone to zero, if so, transition to the game over scene
+     */
+    func deductLives() {
+        livesLeft -= 1
+        if livesLeft == 0 {
+            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+            let gameOverScene = GameOverScene(size: self.size)
+            self.compareMaxPoints()
+            if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
+                gameOverScene.maxPoints = Int(maxPoints) ?? -1
+            }
+            gameOverScene.points = self.hamstersFed
+            self.view?.presentScene(gameOverScene, transition: reveal)
+        }
     }
     
     /**
