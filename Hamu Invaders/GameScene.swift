@@ -14,9 +14,9 @@ import Foundation
 struct PhysicsCategory {
   static let none      : UInt32 = 0
   static let all       : UInt32 = UInt32.max
-  static let hamster   : UInt32 = 0b1       // 1
-  static let hungoverHamster: UInt32 = 0b10      // 2
-  static let projectile: UInt32 = 0b11 // 3
+  static let hamster   : UInt32 = 0b01
+  static let hungoverHamster: UInt32 = 0b10
+  static let projectile: UInt32 = 0b11
 }
 
 // Helper functions to do vector math
@@ -78,14 +78,14 @@ class GameScene: SKScene {
         run(SKAction.repeatForever(
           SKAction.sequence([
             SKAction.run(addHamsters),
-            SKAction.wait(forDuration: 2.0)
+            SKAction.wait(forDuration: 2.0, withRange: 2.0)
             ])
         ))
-        run(SKAction.repeatForever(
+        run(
           SKAction.sequence([
-            SKAction.run(addHungoverHamsters),
-            SKAction.wait(forDuration: 4.0)
-            ])
+            SKAction.wait(forDuration: 15.0),
+            SKAction.run(addDifficulty)
+            ]
         ))
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
@@ -114,7 +114,7 @@ class GameScene: SKScene {
     /**
      Determine the position to generate regular hamsters, creates each physics body, and create an action for them to move across the screen and be removed
      */
-    func addHamsters(){
+    func addHamsters() {
         let hamster = SKSpriteNode(imageNamed: "hamster")
         hamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hamster.size.width / 4, height: hamster.size.height / 4))
         hamster.physicsBody?.isDynamic = true
@@ -185,6 +185,18 @@ class GameScene: SKScene {
         }
         
         hungoverHamster.run(SKAction.sequence([curve, loseAction, removeFromScreen]))
+    }
+    
+    /**
+     Wait until the player has played for a while to increase diffculty and add hungover hamter
+     */
+    func addDifficulty(){
+        run(SKAction.repeatForever(
+          SKAction.sequence([
+            SKAction.run(addHungoverHamsters),
+            SKAction.wait(forDuration: 3.0, withRange: 2.0)
+            ])
+        ))
     }
     
     /**
