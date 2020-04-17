@@ -15,8 +15,7 @@ struct PhysicsCategory {
   static let none      : UInt32 = 0
   static let all       : UInt32 = UInt32.max
   static let hamster   : UInt32 = 0b01
-  static let hungoverHamster: UInt32 = 0b10
-  static let projectile: UInt32 = 0b11
+  static let projectile: UInt32 = 0b10
 }
 
 // Helper functions to do vector math
@@ -136,13 +135,16 @@ class GameScene: SKScene {
         self.addChild(hamster)
         
         let speed = random(min: CGFloat(2.0), max: CGFloat(5.0))
+        let moveLeftSlow = SKAction.move(to: CGPoint(x: size.width/1.3, y: yPos),
+                                         duration: TimeInterval(speed * 1.2))
+        
         let moveLeft = SKAction.move(to: CGPoint(x: -hamster.size.width/8, y: yPos),
-        duration: TimeInterval(speed))
+                                     duration: TimeInterval(speed / 2))
         let removeFromScreen = SKAction.removeFromParent()
         
         // Transition to GameOverScene, passing data
         let deductLives = SKAction.run() {self.deductLives()}
-        hamster.run(SKAction.sequence([moveLeft, deductLives, removeFromScreen]))
+        hamster.run(SKAction.sequence([moveLeftSlow, moveLeft, deductLives, removeFromScreen]))
     }
     
     /**
@@ -153,7 +155,7 @@ class GameScene: SKScene {
         hungoverHamster.setScale(0.75)
         hungoverHamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hungoverHamster.size.width / 2, height: hungoverHamster.size.height / 2))
         hungoverHamster.physicsBody?.isDynamic = true
-        hungoverHamster.physicsBody?.categoryBitMask = PhysicsCategory.hungoverHamster
+        hungoverHamster.physicsBody?.categoryBitMask = PhysicsCategory.hamster
         hungoverHamster.physicsBody?.contactTestBitMask = PhysicsCategory.projectile // notify when it hit
         hungoverHamster.physicsBody?.collisionBitMask = PhysicsCategory.none // dont bounce off each other
         self.addChild(hungoverHamster)
@@ -166,7 +168,8 @@ class GameScene: SKScene {
                       controlPoint1: CGPoint(x: size.width - size.width/4, y: yPos + 400),
                       controlPoint2: CGPoint(x: size.width/4, y: yPos - 400))
         
-        let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: 160)
+        let speed = random(min: CGFloat(2.0), max: CGFloat(5.0)) * 40
+        let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: speed)
         let removeFromScreen = SKAction.removeFromParent()
         let deductLives = SKAction.run() {self.deductLives()}
         
@@ -228,7 +231,6 @@ class GameScene: SKScene {
         projectile.physicsBody?.isDynamic = true
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
         projectile.physicsBody?.contactTestBitMask = PhysicsCategory.hamster
-        projectile.physicsBody?.contactTestBitMask = PhysicsCategory.hungoverHamster
         projectile.physicsBody?.collisionBitMask = PhysicsCategory.none
         projectile.physicsBody?.usesPreciseCollisionDetection = true
         
@@ -289,14 +291,8 @@ extension GameScene: SKPhysicsContactDelegate {
         if let hamster = firstBody.node as? SKSpriteNode,
           let projectile = secondBody.node as? SKSpriteNode {
           projectileDidCollideWithHamster(projectile, hamster)
-        }
-      } else if ((firstBody.categoryBitMask & PhysicsCategory.projectile != 0) &&
-        (secondBody.categoryBitMask & PhysicsCategory.hungoverHamster != 0)) {
-            if let hamster = firstBody.node as? SKSpriteNode,
-              let projectile = secondBody.node as? SKSpriteNode {
-              projectileDidCollideWithHamster(projectile, hamster)
             }
         }
     }
-
 }
+ 
