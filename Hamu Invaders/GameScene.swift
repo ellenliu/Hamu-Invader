@@ -78,14 +78,14 @@ class GameScene: SKScene {
         //loop endlessly once a second
         run(SKAction.repeatForever(
           SKAction.sequence([
-            SKAction.run(addHamsters),
+            SKAction.run({self.addHamsters(isHeroHamster: false)}),
             SKAction.wait(forDuration: 2.0, withRange: 2.0)
             ])
         ))
         run(
           SKAction.sequence([
             SKAction.wait(forDuration: 15.0),
-            SKAction.run(addDifficulty)
+            SKAction.run(levelTwo)
             ]
         ))
         physicsWorld.gravity = .zero
@@ -119,10 +119,16 @@ class GameScene: SKScene {
     }
     
     /**
-     Determine the position to generate regular hamsters, creates each physics body, and create an action for them to move across the screen and be removed
+     Determine the position to generate regular hamsters, and hero hamsters, creates each physics body, and create an action for them to move across the screen and be removed
      */
-    func addHamsters() {
-        let hamster = SKSpriteNode(imageNamed: "hamster")
+    func addHamsters(isHeroHamster: Bool){
+        let hamster: SKSpriteNode
+        if isHeroHamster {
+            hamster = SKSpriteNode(imageNamed: "you-lose")
+        } else {
+            hamster = SKSpriteNode(imageNamed: "hamster")
+        }
+        
         hamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hamster.size.width / 4, height: hamster.size.height / 4))
         hamster.physicsBody?.isDynamic = true
         hamster.physicsBody?.categoryBitMask = PhysicsCategory.hamster
@@ -138,13 +144,21 @@ class GameScene: SKScene {
         let moveLeftSlow = SKAction.move(to: CGPoint(x: size.width/1.3, y: yPos),
                                          duration: TimeInterval(speed * 1.2))
         
-        let moveLeft = SKAction.move(to: CGPoint(x: -hamster.size.width/8, y: yPos),
+        let moveLeftFast = SKAction.move(to: CGPoint(x: -hamster.size.width/8, y: yPos),
                                      duration: TimeInterval(speed / 2))
+        
+        let moveLeftNormal = SKAction.move(to: CGPoint(x: -hamster.size.width/8, y: yPos),
+                                         duration: TimeInterval(speed))
         let removeFromScreen = SKAction.removeFromParent()
         
         // Transition to GameOverScene, passing data
         let deductLives = SKAction.run() {self.deductLives()}
-        hamster.run(SKAction.sequence([moveLeftSlow, moveLeft, deductLives, removeFromScreen]))
+        
+        if isHeroHamster {
+            hamster.run(SKAction.sequence([moveLeftSlow, moveLeftFast, deductLives, removeFromScreen]))
+        } else {
+            hamster.run(SKAction.sequence([moveLeftNormal, deductLives, removeFromScreen]))
+        }
     }
     
     /**
@@ -179,10 +193,28 @@ class GameScene: SKScene {
     /**
      Wait until the player has played for a while to increase diffculty and add hungover hamter
      */
-    func addDifficulty(){
+    func levelTwo(){
         run(SKAction.repeatForever(
           SKAction.sequence([
             SKAction.run(addHungoverHamsters),
+            SKAction.wait(forDuration: 3.0, withRange: 2.0)
+            ])
+        ))
+        run(
+          SKAction.sequence([
+            SKAction.wait(forDuration: 15.0),
+            SKAction.run(levelThree)
+            ]
+        ))
+    }
+    
+    /**
+     Waiting a bit more after hungover hamster first appears to add hero hamsters
+     */
+    func levelThree(){
+        run(SKAction.repeatForever(
+          SKAction.sequence([
+            SKAction.run({self.addHamsters(isHeroHamster: true)}),
             SKAction.wait(forDuration: 3.0, withRange: 2.0)
             ])
         ))
