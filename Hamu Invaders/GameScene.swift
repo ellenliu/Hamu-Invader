@@ -124,9 +124,11 @@ class GameScene: SKScene {
     func addHamsters(isHeroHamster: Bool){
         let hamster: SKSpriteNode
         if isHeroHamster {
-            hamster = SKSpriteNode(imageNamed: "you-lose")
+            hamster = SKSpriteNode(imageNamed: "hero-hamster")
+            hamster.setScale(0.75)
         } else {
             hamster = SKSpriteNode(imageNamed: "hamster")
+            hamster.setScale(0.25)
         }
         
         hamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hamster.size.width / 4, height: hamster.size.height / 4))
@@ -137,7 +139,6 @@ class GameScene: SKScene {
         
         let yPos = random(min: hamster.size.height/8, max: size.height - hamster.size.height/8)
         hamster.position = CGPoint(x: size.width + hamster.size.width/8, y: yPos)
-        hamster.setScale(0.25)
         self.addChild(hamster)
         
         let speed = random(min: CGFloat(2.0), max: CGFloat(5.0))
