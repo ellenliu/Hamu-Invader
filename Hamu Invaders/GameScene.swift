@@ -14,9 +14,8 @@ import Foundation
 struct PhysicsCategory {
   static let none      : UInt32 = 0
   static let all       : UInt32 = UInt32.max
-  static let hamster   : UInt32 = 0b1       // 1
-  static let hungoverHamster: UInt32 = 0b10      // 2
-  static let projectile: UInt32 = 0b11 // 3
+  static let hamster   : UInt32 = 0b01
+  static let projectile: UInt32 = 0b10
 }
 
 // Helper functions to do vector math
@@ -58,7 +57,9 @@ class GameScene: SKScene {
     let jooster = SKSpriteNode(imageNamed: "jooster")
     let looster = SKSpriteNode(imageNamed: "looster")
     let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
+    let livesLabel = SKLabelNode(fontNamed: "Minecraftia")
     var hamstersFed:Int = 0
+    var livesLeft: Int = 3
     
     override func didMove(to view: SKView) {
         // user selected which character to display
@@ -77,24 +78,30 @@ class GameScene: SKScene {
         //loop endlessly once a second
         run(SKAction.repeatForever(
           SKAction.sequence([
-            SKAction.run(addHamsters),
-            SKAction.wait(forDuration: 2.0)
+            SKAction.run({self.addHamsters(isHeroHamster: false)}),
+            SKAction.wait(forDuration: 2.0, withRange: 2.0)
             ])
         ))
-        run(SKAction.repeatForever(
+        run(
           SKAction.sequence([
-            SKAction.run(addHungoverHamsters),
-            SKAction.wait(forDuration: 4.0)
-            ])
+            SKAction.wait(forDuration: 15.0),
+            SKAction.run(levelTwo)
+            ]
         ))
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
         
-        pointsLabel.text = "Hamsters fed: \(hamstersFed)"
+        pointsLabel.text = "Hamsters Fed: \(hamstersFed)"
         pointsLabel.fontSize = 15
         pointsLabel.fontColor = SKColor.white
         pointsLabel.position = CGPoint(x: size.width - 90 , y: size.height - 50)
         addChild(pointsLabel)
+        
+        livesLabel.text = "Lives Left: \(livesLeft)"
+        livesLabel.fontSize = 15
+        livesLabel.fontColor = SKColor.red
+        livesLabel.position = CGPoint(x: 70 , y: size.height - 50)
+        addChild(livesLabel)
         
         // Add audio
         let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
@@ -112,10 +119,18 @@ class GameScene: SKScene {
     }
     
     /**
-     Determine the position to generate regular hamsters, creates each physics body, and create an action for them to move across the screen and be removed
+     Determine the position to generate regular hamsters, and hero hamsters, creates each physics body, and create an action for them to move across the screen and be removed
      */
-    func addHamsters(){
-        let hamster = SKSpriteNode(imageNamed: "hamster")
+    func addHamsters(isHeroHamster: Bool){
+        let hamster: SKSpriteNode
+        if isHeroHamster {
+            hamster = SKSpriteNode(imageNamed: "hero-hamster")
+            hamster.setScale(0.75)
+        } else {
+            hamster = SKSpriteNode(imageNamed: "hamster")
+            hamster.setScale(0.25)
+        }
+        
         hamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hamster.size.width / 4, height: hamster.size.height / 4))
         hamster.physicsBody?.isDynamic = true
         hamster.physicsBody?.categoryBitMask = PhysicsCategory.hamster
@@ -124,27 +139,27 @@ class GameScene: SKScene {
         
         let yPos = random(min: hamster.size.height/8, max: size.height - hamster.size.height/8)
         hamster.position = CGPoint(x: size.width + hamster.size.width/8, y: yPos)
-        hamster.setScale(0.25)
         self.addChild(hamster)
         
         let speed = random(min: CGFloat(2.0), max: CGFloat(5.0))
-        let moveLeft = SKAction.move(to: CGPoint(x: -hamster.size.width/8, y: yPos),
-        duration: TimeInterval(speed))
+        let moveLeftSlow = SKAction.move(to: CGPoint(x: size.width/1.3, y: yPos),
+                                         duration: TimeInterval(speed * 1.2))
+        
+        let moveLeftFast = SKAction.move(to: CGPoint(x: -hamster.size.width/8, y: yPos),
+                                     duration: TimeInterval(speed / 2))
+        
+        let moveLeftNormal = SKAction.move(to: CGPoint(x: -hamster.size.width/8, y: yPos),
+                                         duration: TimeInterval(speed))
         let removeFromScreen = SKAction.removeFromParent()
         
         // Transition to GameOverScene, passing data
-        let loseAction = SKAction.run() { [weak self] in
-            guard let `self` = self else { return }
-            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-            let gameOverScene = GameOverScene(size: self.size)
-            self.compareMaxPoints()
-            if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
-                gameOverScene.maxPoints = Int(maxPoints) ?? -1
-            }
-            gameOverScene.points = self.hamstersFed
-            self.view?.presentScene(gameOverScene, transition: reveal)
+        let deductLives = SKAction.run() {self.deductLives()}
+        
+        if isHeroHamster {
+            hamster.run(SKAction.sequence([moveLeftSlow, moveLeftFast, deductLives, removeFromScreen]))
+        } else {
+            hamster.run(SKAction.sequence([moveLeftNormal, deductLives, removeFromScreen]))
         }
-        hamster.run(SKAction.sequence([moveLeft, loseAction, removeFromScreen]))
     }
     
     /**
@@ -153,9 +168,9 @@ class GameScene: SKScene {
     func addHungoverHamsters(){
         let hungoverHamster = SKSpriteNode(imageNamed: "hungover-hamster")
         hungoverHamster.setScale(0.75)
-        hungoverHamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hungoverHamster.size.width, height: hungoverHamster.size.height))
+        hungoverHamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hungoverHamster.size.width / 2, height: hungoverHamster.size.height / 2))
         hungoverHamster.physicsBody?.isDynamic = true
-        hungoverHamster.physicsBody?.categoryBitMask = PhysicsCategory.hungoverHamster
+        hungoverHamster.physicsBody?.categoryBitMask = PhysicsCategory.hamster
         hungoverHamster.physicsBody?.contactTestBitMask = PhysicsCategory.projectile // notify when it hit
         hungoverHamster.physicsBody?.collisionBitMask = PhysicsCategory.none // dont bounce off each other
         self.addChild(hungoverHamster)
@@ -168,12 +183,51 @@ class GameScene: SKScene {
                       controlPoint1: CGPoint(x: size.width - size.width/4, y: yPos + 400),
                       controlPoint2: CGPoint(x: size.width/4, y: yPos - 400))
         
-        let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: 120)
+        let speed = random(min: CGFloat(2.0), max: CGFloat(5.0)) * 40
+        let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: speed)
         let removeFromScreen = SKAction.removeFromParent()
+        let deductLives = SKAction.run() {self.deductLives()}
         
-        // Transition to GameOverScene, passing data
-        let loseAction = SKAction.run() { [weak self] in
-            guard let `self` = self else { return }
+        hungoverHamster.run(SKAction.sequence([curve, deductLives, removeFromScreen]))
+    }
+    
+    /**
+     Wait until the player has played for a while to increase diffculty and add hungover hamter
+     */
+    func levelTwo(){
+        run(SKAction.repeatForever(
+          SKAction.sequence([
+            SKAction.run(addHungoverHamsters),
+            SKAction.wait(forDuration: 3.0, withRange: 2.0)
+            ])
+        ))
+        run(
+          SKAction.sequence([
+            SKAction.wait(forDuration: 15.0),
+            SKAction.run(levelThree)
+            ]
+        ))
+    }
+    
+    /**
+     Waiting a bit more after hungover hamster first appears to add hero hamsters
+     */
+    func levelThree(){
+        run(SKAction.repeatForever(
+          SKAction.sequence([
+            SKAction.run({self.addHamsters(isHeroHamster: true)}),
+            SKAction.wait(forDuration: 3.0, withRange: 2.0)
+            ])
+        ))
+    }
+    
+    /**
+     Check if the number of lives has gone to zero, if so, transition to the game over scene
+     */
+    func deductLives() {
+        livesLeft -= 1
+        self.livesLabel.text = "Lives Left: \(self.livesLeft)"
+        if livesLeft == 0 {
             let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
             let gameOverScene = GameOverScene(size: self.size)
             self.compareMaxPoints()
@@ -183,8 +237,6 @@ class GameScene: SKScene {
             gameOverScene.points = self.hamstersFed
             self.view?.presentScene(gameOverScene, transition: reveal)
         }
-        
-        hungoverHamster.run(SKAction.sequence([curve, loseAction, removeFromScreen]))
     }
     
     /**
@@ -212,7 +264,6 @@ class GameScene: SKScene {
         projectile.physicsBody?.isDynamic = true
         projectile.physicsBody?.categoryBitMask = PhysicsCategory.projectile
         projectile.physicsBody?.contactTestBitMask = PhysicsCategory.hamster
-        projectile.physicsBody?.contactTestBitMask = PhysicsCategory.hungoverHamster
         projectile.physicsBody?.collisionBitMask = PhysicsCategory.none
         projectile.physicsBody?.usesPreciseCollisionDetection = true
         
@@ -235,7 +286,7 @@ class GameScene: SKScene {
      */
     func projectileDidCollideWithHamster(_ projectile: SKSpriteNode, _ hamster: SKSpriteNode) {
       hamstersFed += 1
-      pointsLabel.text = "Hamsters fed: \(hamstersFed)"
+      pointsLabel.text = "Hamsters Fed: \(hamstersFed)"
       projectile.removeFromParent()
       hamster.removeFromParent()
     }
@@ -273,14 +324,8 @@ extension GameScene: SKPhysicsContactDelegate {
         if let hamster = firstBody.node as? SKSpriteNode,
           let projectile = secondBody.node as? SKSpriteNode {
           projectileDidCollideWithHamster(projectile, hamster)
-        }
-      } else if ((firstBody.categoryBitMask & PhysicsCategory.projectile != 0) &&
-        (secondBody.categoryBitMask & PhysicsCategory.hungoverHamster != 0)) {
-            if let hamster = firstBody.node as? SKSpriteNode,
-              let projectile = secondBody.node as? SKSpriteNode {
-              projectileDidCollideWithHamster(projectile, hamster)
             }
         }
     }
-
 }
+ 
