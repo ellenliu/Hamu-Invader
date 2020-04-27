@@ -277,19 +277,18 @@ class GameScene: SKScene {
           return
         }
         let touchLocation = touch.location(in: self)
+        self.shoot(targetLocation: touchLocation)
         let nodeArray = nodes(at: touchLocation)
-           
+        
         for node in nodeArray{
             if node.name == "cashewButton" {
                 for child in self.children {
-                    if child.name == "hamster" || node.name == "projectile"{
+                    if child.name == "hamster" || child.name == "projectile" {
                         child.removeFromParent()
                     }
                 }
             }
         }
-        self.shoot(targetLocation: touchLocation)
-        
     }
     
     /**
