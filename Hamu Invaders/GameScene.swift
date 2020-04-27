@@ -60,6 +60,7 @@ class GameScene: SKScene {
     let livesLabel = SKLabelNode(fontNamed: "Minecraftia")
     var hamstersFed:Int = 0
     var livesLeft: Int = 3
+    let lockProjectileActionKey = "lockProjectileActionKey"
     
     override func didMove(to view: SKView) {
         // user selected which character to display
@@ -240,17 +241,28 @@ class GameScene: SKScene {
     }
     
     /**
-     When user takes their finger off the screen, we shoot a projectile in the angle where the touch was in these steps
-     1. Set up initial location of projectile to where rooster is and create physics body
-     2. Calculate the difference in location between projectile and touch, and make sure touch is not behind rooster
-     3. Convert offset to a unit vector and make shoot amount big enough so it def goes off the screen
-     4. Create the action to move the projectile
+     When user takes their finger off the screen, we shoot a projectile with a delay to prevent users from spam shooting
      */
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else{
           return
         }
         let touchLocation = touch.location(in: self)
+        self.shoot(targetLocation: touchLocation)
+    }
+    
+    /**
+     Shoots a sunflower seed towards the angle of the given target location
+     1. Set up initial location of projectile to where rooster is and create physics body
+     2. Calculate the difference in location between projectile and touch, and make sure touch is not behind rooster
+     3. Convert offset to a unit vector and make shoot amount big enough so it def goes off the screen
+     4. Create the action to move the projectile
+     */
+    func shoot(targetLocation: CGPoint){
+        guard self.action(forKey: lockProjectileActionKey) == nil else {
+            print("Sunflower Seed locked!")
+            return
+        }
         
         let projectile = SKSpriteNode(imageNamed: "sunflower-seed")
         if let currCharacter = UserDefaults.standard.string(forKey: "character") {
@@ -267,7 +279,7 @@ class GameScene: SKScene {
         projectile.physicsBody?.collisionBitMask = PhysicsCategory.none
         projectile.physicsBody?.usesPreciseCollisionDetection = true
         
-        let offset = touchLocation - projectile.position
+        let offset = targetLocation - projectile.position
         if offset.x < 0{
             return
         }
@@ -279,6 +291,7 @@ class GameScene: SKScene {
         let moveLeft = SKAction.move(to: destination, duration: 2.0)
         let removeFromScreen = SKAction.removeFromParent()
         projectile.run(SKAction.sequence([moveLeft, removeFromScreen]))
+        self.run(SKAction.wait(forDuration: 0.5), withKey: lockProjectileActionKey)
     }
     
     /**
