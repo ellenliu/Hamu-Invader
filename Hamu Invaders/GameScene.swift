@@ -60,6 +60,7 @@ class GameScene: SKScene {
     let livesLabel = SKLabelNode(fontNamed: "Minecraftia")
     var hamstersFed:Int = 0
     var livesLeft: Int = 3
+    let lockProjectileActionKey = "lockProjectileActionKey"
     
     override func didMove(to view: SKView) {
         // user selected which character to display
@@ -103,6 +104,12 @@ class GameScene: SKScene {
         livesLabel.position = CGPoint(x: 70 , y: size.height - 50)
         addChild(livesLabel)
         
+        let cashewButton = SKSpriteNode(imageNamed: "cashew")
+        cashewButton.setScale(1.5)
+        cashewButton.position = CGPoint(x: size.width - 60, y: 60)
+        cashewButton.name = "cashewButton"
+        addChild(cashewButton)
+        
         // Add audio
         let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
         backgroundMusic.autoplayLooped = true
@@ -131,6 +138,7 @@ class GameScene: SKScene {
             hamster.setScale(0.25)
         }
         
+        hamster.name = "hamster"
         hamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hamster.size.width / 4, height: hamster.size.height / 4))
         hamster.physicsBody?.isDynamic = true
         hamster.physicsBody?.categoryBitMask = PhysicsCategory.hamster
@@ -167,6 +175,7 @@ class GameScene: SKScene {
      */
     func addHungoverHamsters(){
         let hungoverHamster = SKSpriteNode(imageNamed: "hungover-hamster")
+        hungoverHamster.name = "hamster"
         hungoverHamster.setScale(0.75)
         hungoverHamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hungoverHamster.size.width / 2, height: hungoverHamster.size.height / 2))
         hungoverHamster.physicsBody?.isDynamic = true
@@ -240,19 +249,63 @@ class GameScene: SKScene {
     }
     
     /**
-     When user takes their finger off the screen, we shoot a projectile in the angle where the touch was in these steps
-     1. Set up initial location of projectile to where rooster is and create physics body
-     2. Calculate the difference in location between projectile and touch, and make sure touch is not behind rooster
-     3. Convert offset to a unit vector and make shoot amount big enough so it def goes off the screen
-     4. Create the action to move the projectile
+     This is called when the cashew button is pressed
+     */
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let touch = touches.first else{
+//            return
+//        }
+//        let touchLocation = touch.location(in: self)
+//        let nodeArray = nodes(at: touchLocation)
+//
+//        for node in nodeArray{
+//            if node.name == "cashewButton" || node.name == "projectile" {
+//                for child in self.children {
+//                    if child.name == "hamster"{
+//                        child.removeFromParent()
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
+    /**
+     When user takes their finger off the screen, we shoot a projectile with a delay to prevent users from spam shooting
      */
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else{
           return
         }
         let touchLocation = touch.location(in: self)
+        self.shoot(targetLocation: touchLocation)
+        let nodeArray = nodes(at: touchLocation)
+        
+        for node in nodeArray{
+            if node.name == "cashewButton" {
+                for child in self.children {
+                    if child.name == "hamster" || child.name == "projectile" {
+                        child.removeFromParent()
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     Shoots a sunflower seed towards the angle of the given target location
+     1. Set up initial location of projectile to where rooster is and create physics body
+     2. Calculate the difference in location between projectile and touch, and make sure touch is not behind rooster
+     3. Convert offset to a unit vector and make shoot amount big enough so it def goes off the screen
+     4. Create the action to move the projectile
+     */
+    func shoot(targetLocation: CGPoint){
+        guard self.action(forKey: lockProjectileActionKey) == nil else {
+            print("Sunflower Seed locked!")
+            return
+        }
         
         let projectile = SKSpriteNode(imageNamed: "sunflower-seed")
+        projectile.name = "projectile"
         if let currCharacter = UserDefaults.standard.string(forKey: "character") {
             if currCharacter == "looster"{
                 projectile.position = looster.position
@@ -267,7 +320,7 @@ class GameScene: SKScene {
         projectile.physicsBody?.collisionBitMask = PhysicsCategory.none
         projectile.physicsBody?.usesPreciseCollisionDetection = true
         
-        let offset = touchLocation - projectile.position
+        let offset = targetLocation - projectile.position
         if offset.x < 0{
             return
         }
@@ -279,6 +332,7 @@ class GameScene: SKScene {
         let moveLeft = SKAction.move(to: destination, duration: 2.0)
         let removeFromScreen = SKAction.removeFromParent()
         projectile.run(SKAction.sequence([moveLeft, removeFromScreen]))
+        self.run(SKAction.wait(forDuration: 0.5), withKey: lockProjectileActionKey)
     }
     
     /**
