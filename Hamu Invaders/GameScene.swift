@@ -104,6 +104,12 @@ class GameScene: SKScene {
         livesLabel.position = CGPoint(x: 70 , y: size.height - 50)
         addChild(livesLabel)
         
+        let cashewButton = SKSpriteNode(imageNamed: "you-lose")
+        cashewButton.setScale(0.5)
+        cashewButton.position = CGPoint(x: size.width - 100, y: 100)
+        cashewButton.name = "cashewButton"
+        addChild(cashewButton)
+        
         // Add audio
         let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
         backgroundMusic.autoplayLooped = true
@@ -132,6 +138,7 @@ class GameScene: SKScene {
             hamster.setScale(0.25)
         }
         
+        hamster.name = "hamster"
         hamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hamster.size.width / 4, height: hamster.size.height / 4))
         hamster.physicsBody?.isDynamic = true
         hamster.physicsBody?.categoryBitMask = PhysicsCategory.hamster
@@ -168,6 +175,7 @@ class GameScene: SKScene {
      */
     func addHungoverHamsters(){
         let hungoverHamster = SKSpriteNode(imageNamed: "hungover-hamster")
+        hungoverHamster.name = "hamster"
         hungoverHamster.setScale(0.75)
         hungoverHamster.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: hungoverHamster.size.width / 2, height: hungoverHamster.size.height / 2))
         hungoverHamster.physicsBody?.isDynamic = true
@@ -239,16 +247,29 @@ class GameScene: SKScene {
             self.view?.presentScene(gameOverScene, transition: reveal)
         }
     }
+
     
     /**
-     When user takes their finger off the screen, we shoot a projectile with a delay to prevent users from spam shooting
+     When user takes their finger off the screen, detect whether the cashew button was hit, or whether user wants to launch a projectile
      */
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else{
           return
         }
         let touchLocation = touch.location(in: self)
+        let nodeArray = nodes(at: touchLocation)
+        
         self.shoot(targetLocation: touchLocation)
+        
+        for node in nodeArray {
+            if node.name == "cashewButton" {
+                for child in self.children {
+                    if node.name == "projectile" || node.name == "hamster" {
+                        child.removeFromParent()
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -265,6 +286,7 @@ class GameScene: SKScene {
         }
         
         let projectile = SKSpriteNode(imageNamed: "sunflower-seed")
+        projectile.name = "projectile"
         if let currCharacter = UserDefaults.standard.string(forKey: "character") {
             if currCharacter == "looster"{
                 projectile.position = looster.position
@@ -291,7 +313,7 @@ class GameScene: SKScene {
         let moveLeft = SKAction.move(to: destination, duration: 2.0)
         let removeFromScreen = SKAction.removeFromParent()
         projectile.run(SKAction.sequence([moveLeft, removeFromScreen]))
-        self.run(SKAction.wait(forDuration: 0.5), withKey: lockProjectileActionKey)
+        self.run(SKAction.wait(forDuration: 0.35), withKey: lockProjectileActionKey)
     }
     
     /**
