@@ -104,9 +104,9 @@ class GameScene: SKScene {
         livesLabel.position = CGPoint(x: 70 , y: size.height - 50)
         addChild(livesLabel)
         
-        let cashewButton = SKSpriteNode(imageNamed: "you-lose")
-        cashewButton.setScale(0.5)
-        cashewButton.position = CGPoint(x: size.width - 100, y: 100)
+        let cashewButton = SKSpriteNode(imageNamed: "cashew")
+        cashewButton.setScale(1.5)
+        cashewButton.position = CGPoint(x: size.width - 60, y: 60)
         cashewButton.name = "cashewButton"
         addChild(cashewButton)
         
@@ -247,10 +247,30 @@ class GameScene: SKScene {
             self.view?.presentScene(gameOverScene, transition: reveal)
         }
     }
-
     
     /**
-     When user takes their finger off the screen, detect whether the cashew button was hit, or whether user wants to launch a projectile
+     This is called when the cashew button is pressed
+     */
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let touch = touches.first else{
+//            return
+//        }
+//        let touchLocation = touch.location(in: self)
+//        let nodeArray = nodes(at: touchLocation)
+//
+//        for node in nodeArray{
+//            if node.name == "cashewButton" || node.name == "projectile" {
+//                for child in self.children {
+//                    if child.name == "hamster"{
+//                        child.removeFromParent()
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
+    /**
+     When user takes their finger off the screen, we shoot a projectile with a delay to prevent users from spam shooting
      */
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else{
@@ -258,18 +278,18 @@ class GameScene: SKScene {
         }
         let touchLocation = touch.location(in: self)
         let nodeArray = nodes(at: touchLocation)
-        
-        self.shoot(targetLocation: touchLocation)
-        
-        for node in nodeArray {
+           
+        for node in nodeArray{
             if node.name == "cashewButton" {
                 for child in self.children {
-                    if node.name == "projectile" || node.name == "hamster" {
+                    if child.name == "hamster" || node.name == "projectile"{
                         child.removeFromParent()
                     }
                 }
             }
         }
+        self.shoot(targetLocation: touchLocation)
+        
     }
     
     /**
@@ -313,7 +333,7 @@ class GameScene: SKScene {
         let moveLeft = SKAction.move(to: destination, duration: 2.0)
         let removeFromScreen = SKAction.removeFromParent()
         projectile.run(SKAction.sequence([moveLeft, removeFromScreen]))
-        self.run(SKAction.wait(forDuration: 0.35), withKey: lockProjectileActionKey)
+        self.run(SKAction.wait(forDuration: 0.5), withKey: lockProjectileActionKey)
     }
     
     /**
