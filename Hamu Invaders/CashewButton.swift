@@ -29,6 +29,7 @@ class CashewButton: SKNode {
                         child.removeFromParent()
                     }
                 }
+                cashewButton.texture = SKTexture(imageNamed: "cashew-gray") 
             }
         }
     }
