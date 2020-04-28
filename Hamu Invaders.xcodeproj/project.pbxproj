@@ -19,6 +19,7 @@
 		C3829BA5243EE34B001BB21A /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3829BA4243EE34B001BB21A /* GameOverScene.swift */; };
 		C3D954B22457C0C4001FBC51 /* ScoreNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D954B12457C0C4001FBC51 /* ScoreNode.swift */; };
 		C3D954B42457C5E0001FBC51 /* CashewButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D954B32457C5E0001FBC51 /* CashewButton.swift */; };
+		C3D954B62457D1A8001FBC51 /* LivesNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D954B52457D1A7001FBC51 /* LivesNode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		C3829BA4243EE34B001BB21A /* GameOverScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
 		C3D954B12457C0C4001FBC51 /* ScoreNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreNode.swift; sourceTree = "<group>"; };
 		C3D954B32457C5E0001FBC51 /* CashewButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CashewButton.swift; sourceTree = "<group>"; };
+		C3D954B52457D1A7001FBC51 /* LivesNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivesNode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 				C3829BA4243EE34B001BB21A /* GameOverScene.swift */,
 				C3D954B12457C0C4001FBC51 /* ScoreNode.swift */,
 				C3D954B32457C5E0001FBC51 /* CashewButton.swift */,
+				C3D954B52457D1A7001FBC51 /* LivesNode.swift */,
 			);
 			path = "Hamu Invaders";
 			sourceTree = "<group>";
@@ -161,6 +164,7 @@
 				C3829BA5243EE34B001BB21A /* GameOverScene.swift in Sources */,
 				C3829B8B243A93EE001BB21A /* GameScene.swift in Sources */,
 				C3D954B42457C5E0001FBC51 /* CashewButton.swift in Sources */,
+				C3D954B62457D1A8001FBC51 /* LivesNode.swift in Sources */,
 				C3D954B22457C0C4001FBC51 /* ScoreNode.swift in Sources */,
 				C3829BA1243C5D8B001BB21A /* WelcomeViewController.swift in Sources */,
 				C3829B8D243A93EE001BB21A /* GameViewController.swift in Sources */,

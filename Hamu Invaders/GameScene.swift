@@ -56,11 +56,10 @@ class GameScene: SKScene {
     
     let jooster = SKSpriteNode(imageNamed: "jooster")
     let looster = SKSpriteNode(imageNamed: "looster")
-    let livesLabel = SKLabelNode(fontNamed: "Minecraftia")
-    var livesLeft: Int = 3
     let lockProjectileActionKey = "lockProjectileActionKey"
     let scoreNode = ScoreNode()
     let cashewButton = CashewButton()
+    let livesNode = LivesNode() 
     
     override func didMove(to view: SKView) {
         // user selected which character to display
@@ -95,11 +94,8 @@ class GameScene: SKScene {
         scoreNode.setup(self.size)
         addChild(scoreNode)
         
-        livesLabel.text = "Lives Left: \(livesLeft)"
-        livesLabel.fontSize = 15
-        livesLabel.fontColor = SKColor.red
-        livesLabel.position = CGPoint(x: 70 , y: size.height - 50)
-        addChild(livesLabel)
+        livesNode.setup(self.size)
+        addChild(livesNode)
         
         cashewButton.setup(self.size)
         addChild(cashewButton)
@@ -155,7 +151,7 @@ class GameScene: SKScene {
         let removeFromScreen = SKAction.removeFromParent()
         
         // Transition to GameOverScene, passing data
-        let deductLives = SKAction.run() {self.deductLives()}
+        let deductLives = SKAction.run() {self.livesNode.deductLives(self, self.size)}
         
         if isHeroHamster {
             hamster.run(SKAction.sequence([moveLeftSlow, moveLeftFast, deductLives, removeFromScreen]))
@@ -189,7 +185,7 @@ class GameScene: SKScene {
         let speed = random(min: CGFloat(2.0), max: CGFloat(5.0)) * 40
         let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: speed)
         let removeFromScreen = SKAction.removeFromParent()
-        let deductLives = SKAction.run() {self.deductLives()}
+        let deductLives = SKAction.run() {self.livesNode.deductLives(self, self.size)}
         
         hungoverHamster.run(SKAction.sequence([curve, deductLives, removeFromScreen]))
     }
@@ -224,23 +220,6 @@ class GameScene: SKScene {
         ))
     }
     
-    /**
-     Check if the number of lives has gone to zero, if so, transition to the game over scene
-     */
-    func deductLives() {
-        livesLeft -= 1
-        self.livesLabel.text = "Lives Left: \(self.livesLeft)"
-        if livesLeft == 0 {
-            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-            let gameOverScene = GameOverScene(size: self.size)
-            scoreNode.compareMaxPoints()
-            if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
-                gameOverScene.maxPoints = Int(maxPoints) ?? -1
-            }
-            gameOverScene.points = scoreNode.getPoints()
-            self.view?.presentScene(gameOverScene, transition: reveal)
-        }
-    }
     
     /**
      When user takes their finger off the screen, we shoot a projectile with a delay to prevent users from spam shooting
