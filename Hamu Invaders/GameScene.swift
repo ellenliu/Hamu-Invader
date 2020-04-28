@@ -56,11 +56,10 @@ class GameScene: SKScene {
     
     let jooster = SKSpriteNode(imageNamed: "jooster")
     let looster = SKSpriteNode(imageNamed: "looster")
-    let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
-    let livesLabel = SKLabelNode(fontNamed: "Minecraftia")
-    var hamstersFed:Int = 0
-    var livesLeft: Int = 3
     let lockProjectileActionKey = "lockProjectileActionKey"
+    let scoreNode = ScoreNode()
+    let cashewButton = CashewButton()
+    let livesNode = LivesNode() 
     
     override func didMove(to view: SKView) {
         // user selected which character to display
@@ -92,24 +91,15 @@ class GameScene: SKScene {
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
         
-        pointsLabel.text = "Hamsters Fed: \(hamstersFed)"
-        pointsLabel.fontSize = 15
-        pointsLabel.fontColor = SKColor.white
-        pointsLabel.position = CGPoint(x: size.width - 90 , y: size.height - 50)
-        addChild(pointsLabel)
+        scoreNode.setup(self.size)
+        addChild(scoreNode)
         
-        livesLabel.text = "Lives Left: \(livesLeft)"
-        livesLabel.fontSize = 15
-        livesLabel.fontColor = SKColor.red
-        livesLabel.position = CGPoint(x: 70 , y: size.height - 50)
-        addChild(livesLabel)
+        livesNode.setup(self.size)
+        addChild(livesNode)
         
-        let cashewButton = SKSpriteNode(imageNamed: "cashew")
-        cashewButton.setScale(1.5)
-        cashewButton.position = CGPoint(x: size.width - 60, y: 60)
-        cashewButton.name = "cashewButton"
+        cashewButton.setup(self.size)
         addChild(cashewButton)
-        
+         
         // Add audio
         let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
         backgroundMusic.autoplayLooped = true
@@ -161,7 +151,7 @@ class GameScene: SKScene {
         let removeFromScreen = SKAction.removeFromParent()
         
         // Transition to GameOverScene, passing data
-        let deductLives = SKAction.run() {self.deductLives()}
+        let deductLives = SKAction.run() {self.livesNode.deductLives(self, self.size)}
         
         if isHeroHamster {
             hamster.run(SKAction.sequence([moveLeftSlow, moveLeftFast, deductLives, removeFromScreen]))
@@ -195,7 +185,7 @@ class GameScene: SKScene {
         let speed = random(min: CGFloat(2.0), max: CGFloat(5.0)) * 40
         let curve = SKAction.follow(path.cgPath, asOffset: true, orientToPath: false, speed: speed)
         let removeFromScreen = SKAction.removeFromParent()
-        let deductLives = SKAction.run() {self.deductLives()}
+        let deductLives = SKAction.run() {self.livesNode.deductLives(self, self.size)}
         
         hungoverHamster.run(SKAction.sequence([curve, deductLives, removeFromScreen]))
     }
@@ -230,44 +220,6 @@ class GameScene: SKScene {
         ))
     }
     
-    /**
-     Check if the number of lives has gone to zero, if so, transition to the game over scene
-     */
-    func deductLives() {
-        livesLeft -= 1
-        self.livesLabel.text = "Lives Left: \(self.livesLeft)"
-        if livesLeft == 0 {
-            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-            let gameOverScene = GameOverScene(size: self.size)
-            self.compareMaxPoints()
-            if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
-                gameOverScene.maxPoints = Int(maxPoints) ?? -1
-            }
-            gameOverScene.points = self.hamstersFed
-            self.view?.presentScene(gameOverScene, transition: reveal)
-        }
-    }
-    
-    /**
-     This is called when the cashew button is pressed
-     */
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard let touch = touches.first else{
-//            return
-//        }
-//        let touchLocation = touch.location(in: self)
-//        let nodeArray = nodes(at: touchLocation)
-//
-//        for node in nodeArray{
-//            if node.name == "cashewButton" || node.name == "projectile" {
-//                for child in self.children {
-//                    if child.name == "hamster"{
-//                        child.removeFromParent()
-//                    }
-//                }
-//            }
-//        }
-//    }
     
     /**
      When user takes their finger off the screen, we shoot a projectile with a delay to prevent users from spam shooting
@@ -277,18 +229,10 @@ class GameScene: SKScene {
           return
         }
         let touchLocation = touch.location(in: self)
-        self.shoot(targetLocation: touchLocation)
         let nodeArray = nodes(at: touchLocation)
         
-        for node in nodeArray{
-            if node.name == "cashewButton" {
-                for child in self.children {
-                    if child.name == "hamster" || child.name == "projectile" {
-                        child.removeFromParent()
-                    }
-                }
-            }
-        }
+        self.shoot(targetLocation: touchLocation)
+        cashewButton.removeHamsters(nodeArray, self)
     }
     
     /**
@@ -332,29 +276,18 @@ class GameScene: SKScene {
         let moveLeft = SKAction.move(to: destination, duration: 2.0)
         let removeFromScreen = SKAction.removeFromParent()
         projectile.run(SKAction.sequence([moveLeft, removeFromScreen]))
-        self.run(SKAction.wait(forDuration: 0.5), withKey: lockProjectileActionKey)
+        self.run(SKAction.wait(forDuration: 0.3), withKey: lockProjectileActionKey)
     }
     
     /**
      When hamster and projectile collide, remove both from the screen
      */
     func projectileDidCollideWithHamster(_ projectile: SKSpriteNode, _ hamster: SKSpriteNode) {
-      hamstersFed += 1
-      pointsLabel.text = "Hamsters Fed: \(hamstersFed)"
-      projectile.removeFromParent()
-      hamster.removeFromParent()
+        scoreNode.addPoint()
+        projectile.removeFromParent()
+        hamster.removeFromParent()
     }
 
-    /**
-     Compare if the user's points this turn is the max points, and update UserDefault if so
-     */
-    func compareMaxPoints(){
-        if let currMax = UserDefaults.standard.string(forKey: "maxPoints") {
-            if hamstersFed > Int(currMax) ?? 0 {
-                UserDefaults.standard.set(hamstersFed, forKey: "maxPoints")
-            }
-        }
-    }
 }
 
 extension GameScene: SKPhysicsContactDelegate {
