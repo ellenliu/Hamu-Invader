@@ -59,9 +59,12 @@ class GameScene: SKScene {
     let lockProjectileActionKey = "lockProjectileActionKey"
     let scoreNode = ScoreNode()
     let cashewButton = CashewButton()
-    let livesNode = LivesNode() 
+    let livesNode = LivesNode()
+    var timer = Timer()
     
     override func didMove(to view: SKView) {
+        timer = Timer.scheduledTimer(timeInterval: 20.0, target: cashewButton, selector: #selector(cashewButton.allowPress), userInfo: nil, repeats: true)
+        
         // user selected which character to display
         if let currCharacter = UserDefaults.standard.string(forKey: "character") {
             if currCharacter == "looster" {

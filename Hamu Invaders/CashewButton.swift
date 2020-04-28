@@ -7,9 +7,11 @@
 //
 
 import SpriteKit
+import Foundation
 
 class CashewButton: SKNode {
     private let cashewButton = SKSpriteNode(imageNamed: "cashew")
+    private var canPress = true
     
     public func setup(_ size: CGSize){
         cashewButton.setScale(1.5)
@@ -22,16 +24,33 @@ class CashewButton: SKNode {
      Remove all hamsters on screen when button is pressed
      */
     public func removeHamsters(_ nodeArray: [SKNode], _ gameScene: GameScene){
-        for node in nodeArray{
-            if node.name == "cashewButton" {
-                for child in gameScene.children {
-                    if child.name == "hamster" || child.name == "projectile" {
-                        child.removeFromParent()
+        if canPress{
+            for node in nodeArray{
+                if node.name == "cashewButton" {
+                    for child in gameScene.children {
+                        if child.name == "hamster" || child.name == "projectile" {
+                            child.removeFromParent()
+                        }
                     }
+                    restrictPress()
                 }
-                cashewButton.texture = SKTexture(imageNamed: "cashew-gray") 
             }
         }
     }
     
+    /**
+     Disable the cashew button
+     */
+    public func restrictPress(){
+        canPress = false
+        cashewButton.texture = SKTexture(imageNamed: "cashew-gray")
+    }
+    
+    /**
+     Enable the cashew button
+     */
+    @objc public func allowPress() {
+        canPress = true
+        cashewButton.texture = SKTexture(imageNamed: "cashew")
+    }
 }
