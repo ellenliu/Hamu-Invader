@@ -60,6 +60,7 @@ class GameScene: SKScene {
     var livesLeft: Int = 3
     let lockProjectileActionKey = "lockProjectileActionKey"
     let scoreNode = ScoreNode()
+    let cashewButton = CashewButton()
     
     override func didMove(to view: SKView) {
         // user selected which character to display
@@ -100,12 +101,9 @@ class GameScene: SKScene {
         livesLabel.position = CGPoint(x: 70 , y: size.height - 50)
         addChild(livesLabel)
         
-        let cashewButton = SKSpriteNode(imageNamed: "cashew")
-        cashewButton.setScale(1.5)
-        cashewButton.position = CGPoint(x: size.width - 60, y: 60)
-        cashewButton.name = "cashewButton"
+        cashewButton.setup(self.size)
         addChild(cashewButton)
-        
+         
         // Add audio
         let backgroundMusic = SKAudioNode(fileNamed: "Reborn.caf")
         backgroundMusic.autoplayLooped = true
@@ -252,18 +250,10 @@ class GameScene: SKScene {
           return
         }
         let touchLocation = touch.location(in: self)
-        self.shoot(targetLocation: touchLocation)
         let nodeArray = nodes(at: touchLocation)
         
-        for node in nodeArray{
-            if node.name == "cashewButton" {
-                for child in self.children {
-                    if child.name == "hamster" || child.name == "projectile" {
-                        child.removeFromParent()
-                    }
-                }
-            }
-        }
+        self.shoot(targetLocation: touchLocation)
+        cashewButton.removeHamsters(nodeArray, self)
     }
     
     /**
