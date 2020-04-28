@@ -56,11 +56,10 @@ class GameScene: SKScene {
     
     let jooster = SKSpriteNode(imageNamed: "jooster")
     let looster = SKSpriteNode(imageNamed: "looster")
-    let pointsLabel = SKLabelNode(fontNamed: "Minecraftia")
     let livesLabel = SKLabelNode(fontNamed: "Minecraftia")
-    var hamstersFed:Int = 0
     var livesLeft: Int = 3
     let lockProjectileActionKey = "lockProjectileActionKey"
+    let scoreNode = ScoreNode()
     
     override func didMove(to view: SKView) {
         // user selected which character to display
@@ -92,11 +91,8 @@ class GameScene: SKScene {
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
         
-        pointsLabel.text = "Hamsters Fed: \(hamstersFed)"
-        pointsLabel.fontSize = 15
-        pointsLabel.fontColor = SKColor.white
-        pointsLabel.position = CGPoint(x: size.width - 90 , y: size.height - 50)
-        addChild(pointsLabel)
+        scoreNode.setup(self.size)
+        addChild(scoreNode)
         
         livesLabel.text = "Lives Left: \(livesLeft)"
         livesLabel.fontSize = 15
@@ -239,35 +235,14 @@ class GameScene: SKScene {
         if livesLeft == 0 {
             let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
             let gameOverScene = GameOverScene(size: self.size)
-            self.compareMaxPoints()
+            scoreNode.compareMaxPoints()
             if let maxPoints = UserDefaults.standard.string(forKey: "maxPoints") {
                 gameOverScene.maxPoints = Int(maxPoints) ?? -1
             }
-            gameOverScene.points = self.hamstersFed
+            gameOverScene.points = scoreNode.getPoints()
             self.view?.presentScene(gameOverScene, transition: reveal)
         }
     }
-    
-    /**
-     This is called when the cashew button is pressed
-     */
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard let touch = touches.first else{
-//            return
-//        }
-//        let touchLocation = touch.location(in: self)
-//        let nodeArray = nodes(at: touchLocation)
-//
-//        for node in nodeArray{
-//            if node.name == "cashewButton" || node.name == "projectile" {
-//                for child in self.children {
-//                    if child.name == "hamster"{
-//                        child.removeFromParent()
-//                    }
-//                }
-//            }
-//        }
-//    }
     
     /**
      When user takes their finger off the screen, we shoot a projectile with a delay to prevent users from spam shooting
@@ -332,29 +307,18 @@ class GameScene: SKScene {
         let moveLeft = SKAction.move(to: destination, duration: 2.0)
         let removeFromScreen = SKAction.removeFromParent()
         projectile.run(SKAction.sequence([moveLeft, removeFromScreen]))
-        self.run(SKAction.wait(forDuration: 0.5), withKey: lockProjectileActionKey)
+        self.run(SKAction.wait(forDuration: 0.3), withKey: lockProjectileActionKey)
     }
     
     /**
      When hamster and projectile collide, remove both from the screen
      */
     func projectileDidCollideWithHamster(_ projectile: SKSpriteNode, _ hamster: SKSpriteNode) {
-      hamstersFed += 1
-      pointsLabel.text = "Hamsters Fed: \(hamstersFed)"
-      projectile.removeFromParent()
-      hamster.removeFromParent()
+        scoreNode.addPoint()
+        projectile.removeFromParent()
+        hamster.removeFromParent()
     }
 
-    /**
-     Compare if the user's points this turn is the max points, and update UserDefault if so
-     */
-    func compareMaxPoints(){
-        if let currMax = UserDefaults.standard.string(forKey: "maxPoints") {
-            if hamstersFed > Int(currMax) ?? 0 {
-                UserDefaults.standard.set(hamstersFed, forKey: "maxPoints")
-            }
-        }
-    }
 }
 
 extension GameScene: SKPhysicsContactDelegate {
